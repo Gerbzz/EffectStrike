@@ -7,9 +7,9 @@ Checked against the [official 13-app Crafting Apps lineup](https://getartcraft.c
 | PhotoCraft | PhotoStrike | Exists |
 | VectorCraft | VectorStrike | Exists |
 | FilmCraft | ClipStrike | Exists; workflow comparison still needed |
-| LightCraft | **LightStrike** | Missing |
+| LightCraft | **LightStrike** | [Full-source public foundation](https://github.com/Gerbzz/LightStrike); [draft verification PR](https://github.com/Gerbzz/LightStrike/pull/1) |
 | PdfCraft | PDFStrike | Exists |
-| EffectCraft | **EffectStrike** | Full-source integration in this repository; untested draft |
+| EffectCraft | **EffectStrike** | Full-source integration in this repository; [synthetic Linux build and workflow passed](https://github.com/Gerbzz/EffectStrike/actions/runs/38717418028), with release gaps documented |
 | DesignCraft | **DesignStrike** | Missing |
 | FigCraft | **FigStrike** | Missing |
 | WordCraft | WordStrike | Exists |
@@ -28,7 +28,7 @@ For each app: first search current local work and Gerbzz repos, pin the upstream
 
 ## Upstream source audit (15 October 2026)
 
-All three official pages point to full Rust workspaces with native egui, CLI, and web app paths. Each source declares `MIT OR Apache-2.0`; preserve its NOTICE and asset attribution. Their separate ArtCraft brand licences require modified forks to remove ArtCraft marks. The illustrated app icons have open licences, but their attribution still needs to travel with them. No counterpart repository has been created from this audit.
+All three official pages point to full Rust workspaces with native egui, CLI, and web app paths. Each source declares `MIT OR Apache-2.0`; preserve its NOTICE and asset attribution. Their separate ArtCraft brand licences require modified forks to remove ArtCraft marks. The illustrated app icons have open licences, but their attribution still needs to travel with them. LightStrike now holds the full LightCraft application snapshot; DesignStrike and FigStrike have not been created from this audit.
 
 | Candidate | Inspected source pin | Important source-reported gap |
 | --- | --- | --- |
