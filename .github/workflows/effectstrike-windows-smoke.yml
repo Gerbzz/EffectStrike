@@ -33,14 +33,14 @@ jobs:
       - name: Install pinned Rust
         shell: pwsh
         run: rustup toolchain install 1.95.0 --profile minimal
-      - name: Build complete native editor and CLI
-        shell: pwsh
-        run: cargo +1.95.0 build --locked -p effectcraft -p effectcraft-cli
       - name: Verify missing Classic 3D shader keeps the GPU compositor and CPU fallback
         shell: pwsh
         env:
           EFFECTCRAFT_REQUIRE_GPU: '1'
         run: cargo +1.95.0 test --locked -p effectcraft-gpu unavailable_classic3d_kernel_renders_on_cpu -- --nocapture
+      - name: Build complete native editor and CLI
+        shell: pwsh
+        run: cargo +1.95.0 build --locked -p effectcraft -p effectcraft-cli
       - name: Check Windows identity and synthetic save, reopen, animation and render
         shell: pwsh
         run: |
