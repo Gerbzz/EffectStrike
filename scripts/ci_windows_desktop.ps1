@@ -33,7 +33,7 @@ try {
 
     $status = [ordered]@{
         platform = 'windows-2025'
-        project = 'synthetic.ecproj'
+        project = [System.IO.Path]::GetFileName($document)
         process_running = !$process.HasExited
         main_window_handle = $handle.ToInt64()
         capture = 'unavailable'
@@ -56,10 +56,25 @@ public static class StrikeWindowBounds {
 }
 '@
     $rect = New-Object StrikeWindowBounds+Rect
-    if (![StrikeWindowBounds]::GetWindowRect($handle, [ref]$rect)) { throw 'Could not read the native editor window bounds.' }
-    $width = $rect.Right - $rect.Left
-    $height = $rect.Bottom - $rect.Top
-    if ($width -lt 400 -or $height -lt 300) { throw "Editor window is unexpectedly small: ${width}x${height}." }
+    $width = 0
+    $height = 0
+    for ($attempt = 0; $attempt -lt 45; $attempt++) {
+        $process.Refresh()
+        if ($process.HasExited) { throw "Editor exited before its real window opened: $($process.ExitCode)." }
+        $handle = $process.MainWindowHandle
+        if ($handle -ne [IntPtr]::Zero -and [StrikeWindowBounds]::GetWindowRect($handle, [ref]$rect)) {
+            $width = $rect.Right - $rect.Left
+            $height = $rect.Bottom - $rect.Top
+            if ($width -ge 400 -and $height -ge 300) { break }
+        }
+        Start-Sleep -Seconds 1
+    }
+    if ($width -lt 400 -or $height -lt 300) {
+        $status['window_width'] = $width
+        $status['window_height'] = $height
+        $status | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $directory 'desktop-status.json')
+        throw "Editor window remained ${width}x${height}; no readable GUI screenshot is claimed."
+    }
     $bitmap = [System.Drawing.Bitmap]::new($width, $height)
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
     try {

@@ -43,7 +43,7 @@ jobs:
           $version = & target/debug/effectcraft.exe --version
           if ($LASTEXITCODE -ne 0 -or $version -notmatch '^EffectStrike ') { throw "Unexpected desktop identity: $version" }
           $info = & target/debug/effectcraft-cli.exe info --empty
-          if ($LASTEXITCODE -ne 0 -or $info -notmatch '^EffectStrike ') { throw "Unexpected CLI identity: $info" }
+          if ($LASTEXITCODE -ne 0 -or @($info)[0] -notmatch '^EffectStrike ') { throw "Unexpected CLI identity: $info" }
           python scripts/ci_synthetic_render.py target/debug/effectcraft-cli.exe smoke-windows
           if ($LASTEXITCODE -ne 0) { throw 'Windows synthetic project workflow failed' }
       - name: Run Windows CLI regression tests

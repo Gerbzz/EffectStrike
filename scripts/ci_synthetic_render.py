@@ -34,7 +34,7 @@ def write_synthetic_png(path: Path) -> None:
 
 def cli(binary: Path, *args: str) -> object:
     command = [str(binary), *args, "--json"]
-    result = subprocess.run(command, text=True, capture_output=True, timeout=90, check=False)
+    result = subprocess.run(command, text=True, encoding="utf-8", capture_output=True, timeout=90, check=False)
     if result.returncode:
         raise AssertionError(f"CLI failed ({result.returncode}): {command}\n{result.stdout}\n{result.stderr}")
     try:
