@@ -131,12 +131,12 @@ fn main() -> eframe::Result {
     let Args { control_port, files, demo, home } = match parse_args(std::env::args().skip(1), std::env::var("EFFECTCRAFT_CONTROL_PORT")) {
         Ok(Some(args)) => args,
         Ok(None) => {
-            println!("effectcraft {}", env!("CARGO_PKG_VERSION"));
+            println!("EffectStrike {}", env!("CARGO_PKG_VERSION"));
             return Ok(());
         }
         // Before the session log, preferences and the window: nothing has started yet.
         Err(e) => {
-            eprintln!("effectcraft: {e}");
+            eprintln!("EffectStrike: {e}");
             std::process::exit(1);
         }
     };
@@ -382,7 +382,7 @@ fn startup_failed(e: &eframe::Error, gl_next: bool) {
     if log::log_enabled!(log::Level::Error) {
         log::error!("{message}");
     } else {
-        eprintln!("effectcraft: {message}");
+        eprintln!("EffectStrike: {message}");
     }
     let _ = rfd::MessageDialog::new()
         .set_level(rfd::MessageLevel::Error)

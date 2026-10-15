@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import struct
 import subprocess
@@ -51,7 +52,7 @@ def main() -> None:
     frame = output / "render.png"
     write_synthetic_png(synthetic)
 
-    cli(
+    created = cli(
         binary,
         "run",
         "comp.new",
@@ -64,6 +65,8 @@ def main() -> None:
         "--save-as",
         str(project),
     )
+    imported = next(step["result"] for step in created["result"] if step["command"] == "file.import")
+    assert imported["items"] and not imported["errors"], imported
     assert project.is_file() and project.stat().st_size > 100, "project was not saved"
 
     reopened = cli(binary, "info", "--project", str(project))
@@ -72,6 +75,20 @@ def main() -> None:
     assert comp["width"] == 160 and comp["height"] == 90, comp
     assert len(comp["layers"]) >= 2, comp
     assert any("synthetic" in item["name"].lower() for item in reopened["project"]["items"]), reopened
+    footage_layer = next(layer for layer in comp["layers"] if "synthetic" in layer["name"].lower())
+    for time, position in ((0, [32, 45]), (0.5, [128, 45])):
+        cli(
+            binary,
+            "exec",
+            "prop.addKey",
+            "--params",
+            json.dumps({"layer": footage_layer["id"], "path": "transform/position", "time": time, "value": position}),
+            "--project",
+            str(project),
+            "--save",
+        )
+    animated = cli(binary, "get", comp["name"], str(footage_layer["id"]), "transform/position", "--time", "0.5", "--project", str(project))
+    assert animated["animated"] and len(animated["keys"]) == 2, animated
 
     rendered = cli(binary, "render-frame", "--project", str(project), "--time", "0.25", "--out", str(frame))
     data = frame.read_bytes()
@@ -79,7 +96,17 @@ def main() -> None:
     width, height = struct.unpack(">II", data[16:24])
     assert (width, height) == (160, 90), (width, height)
     assert len(data) > 200, "rendered frame is suspiciously small"
-    print(json.dumps({"project_bytes": project.stat().st_size, "render_bytes": len(data), "dimensions": [width, height], "comp": comp["name"], "layers": len(comp["layers"]), "renderer": rendered}))
+    start = output / "start.png"
+    finish = output / "finish.png"
+    cli(binary, "render-frame", "--project", str(project), "--time", "0", "--out", str(start))
+    cli(binary, "render-frame", "--project", str(project), "--time", "0.5", "--out", str(finish))
+    assert start.read_bytes() != finish.read_bytes(), "keyframed footage rendered the same at both times"
+
+    queued = cli(binary, "render", "--project", str(project), "--out", str(output / "sequence_[#####].png"), "--format", "png", "--start", "0", "--end", "0.1")
+    sequence = sorted(output.glob("sequence_*.png"))
+    assert queued["rendered"] and sequence, queued
+    assert all(path.read_bytes().startswith(b"\x89PNG\r\n\x1a\n") for path in sequence)
+    print(json.dumps({"project_bytes": project.stat().st_size, "render_bytes": len(data), "render_sha256": hashlib.sha256(data).hexdigest(), "dimensions": [width, height], "comp": comp["name"], "layers": len(comp["layers"]), "keyframes": len(animated["keys"]), "queued_frames": len(sequence), "renderer": rendered}))
 
 
 if __name__ == "__main__":
