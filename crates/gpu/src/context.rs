@@ -29,8 +29,8 @@ const ENTRIES: &[&str] = &[
 /// turning the whole compositor off.
 const EFFECT_ENTRIES: &[&str] = &["box_h", "box_v", "directional", "glow_bright", "glow_combine", "shadow_make", "shadow_combine", "pointwise"];
 
-/// Optional entry points that also bind group 1 (four read-only storage buffers; see
-/// [`Enc::dispatch_ext`]). A driver may reject Classic 3D; its runs then draw on the CPU.
+/// Entry points that also bind group 1 (four read-only storage buffers; see
+/// [`Enc::dispatch_ext`]).
 const EXT_ENTRIES: &[&str] = &["classic3d"];
 
 /// Pixel format of every working texture: premultiplied RGBA, 32-bit float (32 bpc headroom;
@@ -286,7 +286,7 @@ pub struct GpuContext {
     bgl: wgpu::BindGroupLayout,
     bgl_ext: wgpu::BindGroupLayout,
     pipelines: HashMap<&'static str, wgpu::ComputePipeline>,
-    /// Optional kernels that failed to build, and why (their work renders on the CPU).
+    /// Effect kernels that failed to build, and why (their effects render on the CPU).
     unavailable: Vec<(&'static str, String)>,
     display_bgl: wgpu::BindGroupLayout,
     display: wgpu::ComputePipeline,
@@ -535,26 +535,16 @@ impl GpuContext {
                 })
             })
         };
-        // The compositor's core kernels are required. A Classic 3D or effect kernel that
-        // doesn't build is left out; its work renders on the CPU (see `Enc::take_missing`).
+        // The compositor's own kernels are required; an effect kernel that doesn't build is
+        // left out, and its effects render on the CPU (see `Enc::take_missing`).
         let mut pipelines = ENTRIES
             .iter()
             .chain(crate::adv3d::SKY_KERNELS)
             .map(|e| (e, &layout))
+            .chain(EXT_ENTRIES.iter().map(|e| (e, &layout_ext)))
             .map(|(e, layout)| Ok((*e, build(e, layout)?)))
             .collect::<Result<HashMap<_, _>, String>>()?;
         let mut unavailable = vec![];
-        for e in EXT_ENTRIES {
-            match build(e, &layout_ext) {
-                Ok(p) => {
-                    pipelines.insert(*e, p);
-                }
-                Err(why) => {
-                    log::warn!("gpu {name}: kernel {e} unavailable, Classic 3D runs render on the CPU: {why}");
-                    unavailable.push((*e, why));
-                }
-            }
-        }
         for e in EFFECT_ENTRIES
             .iter()
             .chain(crate::fx_color::KERNELS)
@@ -822,7 +812,7 @@ impl GpuContext {
 
     /// Readbacks (GPU → CPU) are possible: waited for natively, or deferred (a browser
     /// worker, [`crate::deferred`]). Impossible on the browser's main thread.
-    /// Optional kernels the device couldn't build, with why: their work renders on the CPU.
+    /// Effect kernels the device couldn't build, with why: their effects render on the CPU.
     pub fn unavailable_kernels(&self) -> &[(&'static str, String)] {
         &self.unavailable
     }
