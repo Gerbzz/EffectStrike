@@ -1,0 +1,8 @@
+asset:        effectstrike-home-ubuntu24-cropped.png
+title:        EffectStrike native Ubuntu Home screen cropped to its application window
+author:       EffectStrike contributors; captured for Gerbzz
+source:       https://github.com/Gerbzz/EffectStrike/actions/runs/38717418028
+license:      LicenseRef-PWDS-Brand for the embedded PWDS mark; MIT OR Apache-2.0 for the other app UI
+license-file: ../../assets/branding/LICENSE-brand.txt; ../../LICENSE-MIT; ../../LICENSE-APACHE
+added:        2026-10-15 by Gerbzz
+notes:        Pixel-exact crop (x=32, y=64, width=1216, height=672) of effectstrike-home-ubuntu24.png; all 817152 pixels match the source. The full 1280x800 Xvfb capture remains alongside this file. Only the empty black display outside the app was removed.

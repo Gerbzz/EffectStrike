@@ -1,0 +1,8 @@
+asset:        effectstrike-editor-windows2025-cropped.png
+title:        EffectStrike native Windows editor cropped to its application window
+author:       EffectStrike contributors; captured for Gerbzz
+source:       https://github.com/Gerbzz/EffectStrike/actions/runs/38753532962
+license:      MIT OR Apache-2.0
+license-file: ../../LICENSE-MIT; ../../LICENSE-APACHE
+added:        2026-10-15 by Gerbzz
+notes:        Pixel-exact crop (x=8, y=8, width=1024, height=720) of effectstrike-editor-windows2025.png; all 737280 pixels match the source. The full 1040x736 capture remains alongside this file. The crop removes only black capture margin and taskbar pixels, preserving the complete visible app window. The image proves a 2D preview on the hosted software DX12 adapter, not GPU effects.

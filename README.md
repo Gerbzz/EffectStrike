@@ -1,50 +1,52 @@
 # EffectStrike
 
-EffectStrike is an independent PWDS motion graphics and visual effects application built on the **complete [EffectCraft](https://github.com/storytold/effectcraft) Rust compositor**. This repository contains the native desktop app, project and render engine, egui interface, CLI, web frontend source, and tests. It does not reduce EffectCraft to a few crates or a mock interface.
+**Open-source motion graphics and visual effects in Rust.** Build layered compositions, animate properties, preview frames in a native editor, and render from an automation-friendly CLI.
 
-The foundation is pinned to upstream commit [`0311bdc`](https://github.com/storytold/effectcraft/commit/0311bdc34d0dc10c2d18ff7875b4f52d483e5e27) (15 October 2026). The source snapshot is published as a new root commit so that upstream's separately licensed ArtCraft trademark files are absent from this repository's history. See [NOTICE](NOTICE), [ATTRIBUTION.md](ATTRIBUTION.md), [LICENSE-MIT](LICENSE-MIT), and [LICENSE-APACHE](LICENSE-APACHE). EffectStrike is not made or endorsed by the ArtCraft Team.
+![EffectStrike native Windows compositor showing the synthetic project](docs/images/effectstrike-editor-windows2025-cropped.png)
 
-## Workflows present in the foundation
+*The actual EffectStrike desktop process on a standard hosted Windows 2025 runner. Its saved synthetic project shows the composition viewer, project bin, two layers, timeline, and a 2D preview. This pixel-exact 1024×720 app-window crop comes from [green run 38753532962](https://github.com/Gerbzz/EffectStrike/actions/runs/38753532962); the [full 1040×736 capture](docs/images/effectstrike-editor-windows2025.png) is retained.*
 
-The upstream source implements composition and layer editing, footage import, keyframes and graph editing, effects, expressions, 3D cameras and lights, and a render queue. Its CLI can render and edit projects headlessly. These are **upstream source capabilities**, not a claim that this fork has passed acceptance testing. The source retains the `.ecproj` project format and internal `effectcraft-*` Rust crate names for compatibility.
+EffectStrike is an independent early-alpha fork of the complete [EffectCraft](https://github.com/storytold/effectcraft) compositor. This Rust workspace contains the desktop editor, project and render engine, effects, CLI, web frontend source and tests. The features below are present in the foundation; the [verified workflows](#verified-workflows) show which paths this fork has exercised.
 
-The desktop build currently uses the existing `effectcraft` Cargo package and binary name:
+## Compose and animate
+
+- **Build layered scenes:** compositions, imported footage, transforms, timing, masks and effects are represented in the editor and project engine.
+- **Animate properties:** keyframes, timeline and graph-editor source, expressions, cameras and lights support motion-design workflows.
+- **Render and automate:** the render queue and CLI can produce frames and sequences. The native `.ecproj` format and internal `effectcraft-*` package names remain for compatibility.
+
+![EffectStrike native Ubuntu Home view with the approved PWDS publisher mark](docs/images/effectstrike-home-ubuntu24-cropped.png)
+
+*The real first-run Home window under Ubuntu 24.04/Xvfb and Mesa llvmpipe, cropped exactly to its 1216×672 app bounds from [green run 38717418028](https://github.com/Gerbzz/EffectStrike/actions/runs/38717418028). The [full 1280×800 capture](docs/images/effectstrike-home-ubuntu24.png) is retained. The approved PWDS mark appears on its light plaque.*
+
+## Verified workflows
+
+| Environment | Result |
+| --- | --- |
+| [Windows 2025](https://github.com/Gerbzz/EffectStrike/actions/runs/38753532962) | Built the native editor and CLI; imported a generated PNG; saved and reopened `.ecproj`; persisted two position keyframes; exported a [160×90 CPU frame](docs/images/effectstrike-synthetic-render-windows2025.png) and a three-frame PNG sequence; passed all 25 CLI tests; and opened the saved project in the editor shown above. |
+| [Ubuntu 24.04](https://github.com/Gerbzz/EffectStrike/actions/runs/38717418028) | Built editor and CLI, exercised synthetic import/save/reopen, animation, PNG render and sequence export, passed CLI tests, and captured the native Home view above. |
+
+These checks use generated media and exercise a limited 2D composition. The hosted Windows adapter was Microsoft Basic Render Driver software DX12; it rejected the Classic 3D shader. An attempted optional GPU/CPU fallback timed out in the full render comparison and was reverted; the CPU renderer remains the supported route on that adapter. GPU 3D/effects on real hardware are **not verified**. Representative video footage, interactive timeline editing, graph editing, effect output, video delivery, macOS, recovery, accessibility and installers also need testing. See the [verification ledger](docs/EFFECTSTRIKE_STATUS.md). **No public installer or production release is offered.**
+
+The screenshots and workflow evidence come from application work in [PR #1](https://github.com/Gerbzz/EffectStrike/pull/1).
+
+## Build from source
+
+Install Rust 1.95 or newer and the native graphics/windowing dependencies for your platform. The source retains compatible Cargo package and binary names:
 
 ```sh
-cargo run --release -p effectcraft
-cargo run --release -p effectcraft -- --demo
-cargo run --release -p effectcraft-cli -- render --out demo.mp4
+git clone https://github.com/Gerbzz/EffectStrike.git
+cd EffectStrike
+cargo build --locked -p effectcraft -p effectcraft-cli
+cargo run --locked -p effectcraft -- --demo
+cargo run --locked -p effectcraft-cli -- info --empty
 ```
 
-Rust 1.95 or newer is required. The release-mode `cargo run` commands above are documented from upstream and have not been run for this fork. A hosted Ubuntu 24.04 job has built both debug binaries and exercised the CLI with a synthetic project. No installer or signed release is offered here yet.
+These are source commands, not installer instructions. The tested synthetic import/animation/render procedure and exact code revisions are in [docs/EFFECTSTRIKE_STATUS.md](docs/EFFECTSTRIKE_STATUS.md). EffectStrike does not support After Effects `.aep`/`.aepx` projects or plug-ins.
 
-## Integration status
+## Project and credits
 
-- The desktop window, Home screen, About dialog, Help links, and Windows resource description display EffectStrike and point feedback to this repository.
-- The approved PWDS company mark appears on a light plaque on Home and About. A distinct illustrated EffectStrike app icon has not been supplied; the openly licensed upstream app icon remains in the source for now. See [brand attribution](assets/branding/PWDS-logo.png.attribution).
-- ArtCraft trademark image files were removed. The upstream code, legal notices, third-party attributions, and open licences remain.
-- Upstream GitHub Actions workflows were removed so publishing this source does not start unapproved hosted builds or release jobs.
-- No local compile, render, native interaction, or installer test has run; another suite app owns the local build slot. [Bounded Ubuntu validation](https://github.com/Gerbzz/EffectStrike/actions/runs/38753532705) and [bounded Windows validation](https://github.com/Gerbzz/EffectStrike/actions/runs/38753532962) built the desktop and CLI apps, imported a generated PNG, saved/reopened a composition, animated it with two keys, rendered a frame and a PNG sequence, and passed 25 CLI tests on each platform. The Windows editor opened the saved composition and drew a visible preview on the hosted software DX12 adapter. The [verification ledger](docs/EFFECTSTRIKE_STATUS.md) records the exact evidence and limits.
+The full foundation is pinned to [EffectCraft commit `0311bdc34d0dc10c2d18ff7875b4f52d483e5e27`](https://github.com/storytold/effectcraft/commit/0311bdc34d0dc10c2d18ff7875b4f52d483e5e27). The original [MIT](LICENSE-MIT) and [Apache-2.0](LICENSE-APACHE) licences, [NOTICE](NOTICE) and [asset attribution](ATTRIBUTION.md) remain. The inherited openly licensed unicorn app icon is temporary source artwork, not a finished EffectStrike icon.
 
-EffectCraft describes itself as an alpha compositor and cautions against relying on it for client work. EffectStrike is also pre-release. Existing After Effects `.aep` and `.aepx` projects and plug-ins are not supported by the upstream foundation. Internal menus, translations, web branding, app icon, and packaging still need fork-specific review before distribution.
+<img src="assets/branding/PWDS-logo.png" alt="PWDS publisher mark" width="110">
 
-## Next checkpoints
-
-1. Extend the passing synthetic project path to representative footage, effects, text, graph editing, and video export. Check GPU effects on real Windows hardware; the hosted software adapter rejected classic3d shader compilation.
-2. Inspect Home and About at more window sizes and on Windows/macOS; test dialogs, keyboard actions, and accessibility. The hosted Linux Home and Windows saved-project editor captures are visual baselines, not interactive editing acceptance tests.
-3. Complete application identity across CLI, web, localized strings, icons, packaging, and installer metadata using approved creative-category artwork.
-4. Compare output against simple independent reference cases before claiming reliable production workflows.
-
-The remaining ArtCraft counterparts and foundation choices are recorded in [the suite coverage plan](docs/STRIKE_COVERAGE_PLAN.md).
-
-## Screenshots from the verified hosted run
-
-The [green Ubuntu 24.04 run](https://github.com/Gerbzz/EffectStrike/actions/runs/38717418028) captured these exact images at code revision `11ffad2`. The Home image used Xvfb at 1280x800 with Mesa llvmpipe software OpenGL; the render image came from the CPU CLI compositor using generated media. They do not demonstrate Windows/macOS behavior or an interactive editing session. See each image's attribution sidecar and [asset index](ATTRIBUTION.md).
-
-![EffectStrike Home on hosted Ubuntu 24.04, with the PWDS company mark](docs/images/effectstrike-home-ubuntu24.png)
-
-![Synthetic 160x90 composition frame produced by EffectStrike's CPU renderer](docs/images/effectstrike-synthetic-render.png)
-
-The [green Windows 2025 run](https://github.com/Gerbzz/EffectStrike/actions/runs/38753532962) at code revision `d4a2b76` captured the actual editor with its saved two-layer synthetic composition. The hosted runner used Microsoft Basic Render Driver software DX12; its GPU compositor's classic3d shaders failed to initialize, while the 2D project preview drew. This screenshot does not verify GPU effects or editing interactions.
-
-![EffectStrike native Windows editor showing the saved synthetic composition and timeline](docs/images/effectstrike-editor-windows2025.png)
+EffectStrike is published by PWDS. Its existing mark has [separate brand terms](assets/branding/LICENSE-brand.txt). EffectStrike is independent of and not endorsed by ArtCraft.
