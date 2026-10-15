@@ -7,7 +7,7 @@ Checked against the [official 13-app Crafting Apps lineup](https://getartcraft.c
 | PhotoCraft | PhotoStrike | Exists |
 | VectorCraft | VectorStrike | Exists |
 | FilmCraft | ClipStrike | Exists; workflow comparison still needed |
-| LightCraft | **LightStrike** | [Full-source public foundation](https://github.com/Gerbzz/LightStrike); [draft verification PR](https://github.com/Gerbzz/LightStrike/pull/1) |
+| LightCraft | **LightStrike** | [Full-source public foundation](https://github.com/Gerbzz/LightStrike); [draft PR with green synthetic Linux workflow](https://github.com/Gerbzz/LightStrike/pull/1) |
 | PdfCraft | PDFStrike | Exists |
 | EffectCraft | **EffectStrike** | Full-source integration in this repository; [synthetic Linux build and workflow passed](https://github.com/Gerbzz/EffectStrike/actions/runs/38717418028), with release gaps documented |
 | DesignCraft | **DesignStrike** | Missing |
