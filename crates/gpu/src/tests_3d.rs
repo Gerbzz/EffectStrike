@@ -11,7 +11,7 @@ use effectcraft_project::{BitDepth, Comp, ItemKind, Layer, LayerSource, LightKin
 use effectcraft_render::{Backend, RenderOpts, Renderer};
 use effectcraft_time::{FrameRate, Tick};
 
-use crate::tests::{Pattern, Scene, check, compare_at, gpu, n, opts, set};
+use crate::tests::{Pattern, Scene, check, compare_at, diff, gpu, n, opts, set, tolerance};
 
 const W: u32 = 160;
 const H: u32 = 100;
@@ -217,6 +217,30 @@ fn the_gpu_draws_classic_3d_runs_itself() {
     assert!(covered > (W * H / 3) as usize, "the planes cover the frame ({covered} px)");
     let d = crate::tests::diff(&cpu, &img, 1e-3);
     assert!(d.over * 200 <= d.total, "{d:?}");
+}
+
+/// A driver that rejects only the Classic 3D shader must retain the rest of the GPU
+/// compositor and render that 3D run on the CPU, including the 2D background.
+#[test]
+fn unavailable_classic3d_kernel_renders_on_cpu() {
+    let mut ctx = match pollster::block_on(crate::context::GpuContext::request()) {
+        Ok(ctx) => ctx,
+        Err(error) => {
+            assert!(std::env::var("EFFECTCRAFT_REQUIRE_GPU").ok().as_deref() != Some("1"), "required GPU context unavailable: {error}");
+            return;
+        }
+    };
+    if !ctx.unavailable_kernels().iter().any(|(entry, _)| *entry == "classic3d") {
+        ctx.drop_kernel("classic3d");
+    }
+    assert!(ctx.unavailable_kernels().iter().any(|(entry, _)| *entry == "classic3d"));
+    let g = crate::Gpu::from_context(ctx);
+    let s = crossing(BitDepth::Bpc32, BlendMode::Normal);
+    let cpu = Renderer::new(&s.p, &Pattern, RenderOpts { backend: Backend::Cpu, ..opts() }).comp_frame_cpu(s.cid, Tick::ZERO);
+    let mut r = Renderer::new(&s.p, &Pattern, RenderOpts { backend: Backend::Gpu, ..opts() });
+    r.accel = Some(&g);
+    let img = g.render(&r, s.cid, Tick::ZERO).expect("the GPU compositor survives a missing Classic 3D kernel");
+    check("Classic 3D kernel CPU fallback", Some(diff(&cpu, &img, tolerance(BitDepth::Bpc32))), 0.0);
 }
 
 /// Classic 3D bokeh depth of field runs on the GPU: iris shapes, highlights, fringe, Fast
