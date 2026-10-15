@@ -1,0 +1,20 @@
+EffectCraft
+Copyright (c) 2026 ArtCraft Team and the EffectCraft contributors.
+Licensed under the MIT License or the Apache License, Version 2.0, at your option
+(LICENSE-MIT, LICENSE-APACHE).
+
+EffectStrike is an independent fork of EffectCraft based on upstream commit
+0311bdc34d0dc10c2d18ff7875b4f52d483e5e27. The original ArtCraft trademark
+assets have been removed. No endorsement by the ArtCraft Team is implied.
+
+The approved PWDS mark in assets/branding/ is separate from the software licence;
+see assets/branding/LICENSE-brand.txt and ATTRIBUTION.md.
+
+Third-party material
+
+This product bundles third-party material under its own licenses, listed below. The per-file
+list (author, source, license) is in ATTRIBUTION.md.
+
+Inter (assets/fonts/Inter-*.ttf) — SIL Open Font License 1.1. See assets/fonts/OFL-Inter.txt.
+Noto Serif (assets/fonts/NotoSerif-Regular.ttf) — SIL Open Font License 1.1. See assets/fonts/OFL-NotoSerif.txt.
+JetBrains Mono (assets/fonts/JetBrainsMono-Regular.ttf) — SIL Open Font License 1.1. See assets/fonts/OFL-JetBrainsMono.txt.

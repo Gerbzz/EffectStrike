@@ -1,0 +1,7 @@
+PWDS brand artwork
+
+The file PWDS-logo.png is an existing Pro WebDev Solutions company mark copied
+unmodified from Gerbzz/PWDS-Strike-Launcher. It is included here for the approved
+EffectStrike/PWDS presentation. It is not part of EffectCraft's MIT OR Apache-2.0
+software licence. The PWDS name and logo remain with their owner; reuse outside
+this project requires the owner's permission.

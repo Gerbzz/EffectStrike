@@ -1,0 +1,8 @@
+asset:        PWDS-logo.png
+title:        Approved Pro WebDev Solutions company mark
+author:       Pro WebDev Solutions
+source:       https://github.com/Gerbzz/PWDS-Strike-Launcher/blob/main/assets/branding/PWDS-logo.png
+license:      LicenseRef-PWDS-Brand
+license-file: assets/branding/LICENSE-brand.txt
+added:        2026-10-15 by Gerbzz EffectStrike integration
+notes:        Copied unchanged; source Git blob e6478d3dff4406c57679126e63c40282774fe843. Displayed on a light plaque in Home and About. Separate from app code for later category artwork.
