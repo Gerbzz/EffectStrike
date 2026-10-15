@@ -224,8 +224,20 @@ impl Gpu {
             return self.render_deferred(&d, r, comp, t);
         }
         let mut e = Enc::new(&self.ctx);
-        let img = walk::render(&mut e, r, comp, t)?;
-        e.download(&img)
+        let img = match walk::render(&mut e, r, comp, t) {
+            Some(img) => img,
+            None => {
+                #[cfg(test)]
+                eprintln!("Classic 3D fallback diagnostic: compositor walk declined, health={:?}", self.ctx.check_health());
+                return None;
+            }
+        };
+        #[cfg(test)]
+        eprintln!("Classic 3D fallback diagnostic: compositor walk succeeded; reading final image");
+        let out = e.download(&img);
+        #[cfg(test)]
+        eprintln!("Classic 3D fallback diagnostic: final readback={}, health={:?}", out.is_some(), self.ctx.check_health());
+        out
     }
 
     /// [`Gpu::render`] with deferred readbacks: the frame's readback is keyed by comp, time and

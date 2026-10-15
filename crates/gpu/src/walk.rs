@@ -62,9 +62,27 @@ pub(crate) fn render<'g>(e: &mut Enc<'g>, r: &Renderer, comp_id: ItemId, t: Tick
 
 /// Run a CPU drawing step on the canvas (read back, draw, upload).
 fn on_cpu(e: &mut Enc, canvas: &mut GpuImage, f: impl FnOnce(&mut Image)) -> Option<()> {
-    let mut img = e.download(canvas)?;
+    let mut img = match e.download(canvas) {
+        Some(img) => img,
+        None => {
+            #[cfg(test)]
+            eprintln!("Classic 3D fallback diagnostic: CPU canvas download failed, health={:?}", e.g.check_health());
+            return None;
+        }
+    };
+    #[cfg(test)]
+    eprintln!("Classic 3D fallback diagnostic: CPU canvas download succeeded");
     f(&mut img);
-    *canvas = e.g.upload_image(&img)?;
+    *canvas = match e.g.upload_image(&img) {
+        Some(img) => img,
+        None => {
+            #[cfg(test)]
+            eprintln!("Classic 3D fallback diagnostic: CPU canvas upload failed, health={:?}", e.g.check_health());
+            return None;
+        }
+    };
+    #[cfg(test)]
+    eprintln!("Classic 3D fallback diagnostic: CPU canvas upload succeeded");
     Some(())
 }
 

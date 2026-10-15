@@ -11,7 +11,7 @@ use effectcraft_project::{BitDepth, Comp, ItemKind, Layer, LayerSource, LightKin
 use effectcraft_render::{Backend, RenderOpts, Renderer};
 use effectcraft_time::{FrameRate, Tick};
 
-use crate::tests::{Pattern, Scene, check, compare_at, gpu, n, opts, set};
+use crate::tests::{Pattern, Scene, check, compare_at, diff, gpu, n, opts, set, tolerance};
 
 const W: u32 = 160;
 const H: u32 = 100;
@@ -219,11 +219,10 @@ fn the_gpu_draws_classic_3d_runs_itself() {
     assert!(d.over * 200 <= d.total, "{d:?}");
 }
 
-/// A driver that rejects the Classic 3D shader must still create a GPU context and
-/// signal the compositor to draw the prepared 3D run on the CPU. This avoids a
-/// device readback, which the hosted Windows software adapter cannot reliably finish.
+/// A driver that rejects only the Classic 3D shader must retain the rest of the GPU
+/// compositor and render that 3D run on the CPU, including the 2D background.
 #[test]
-fn unavailable_classic3d_kernel_requests_cpu_fallback() {
+fn unavailable_classic3d_kernel_renders_on_cpu() {
     let mut ctx = match pollster::block_on(crate::context::GpuContext::request()) {
         Ok(ctx) => ctx,
         Err(error) => {
@@ -235,18 +234,22 @@ fn unavailable_classic3d_kernel_requests_cpu_fallback() {
         ctx.drop_kernel("classic3d");
     }
     assert!(ctx.unavailable_kernels().iter().any(|(entry, _)| *entry == "classic3d"));
+    let start = std::time::Instant::now();
+    let mut probe = crate::context::Enc::new(&ctx);
+    let blank = probe.zeros(16, 16);
+    let baseline_readback = probe.download(&blank).is_some();
+    eprintln!("Classic 3D fallback diagnostic: baseline readback={baseline_readback}, elapsed={:?}, health={:?}", start.elapsed(), ctx.check_health());
+    drop(probe);
+    let g = crate::Gpu::from_context(ctx);
     let s = crossing(BitDepth::Bpc32, BlendMode::Normal);
-    let r = Renderer::new(&s.p, &Pattern, RenderOpts { backend: Backend::Gpu, ..opts() });
-    let eval = r.eval_ctx(s.cid, Tick::ZERO).unwrap();
-    let visible = r.visible_layers(&eval);
-    let run: Vec<_> = visible.iter().copied().filter(|l| l.is_3d()).collect();
-    let prepared = r.prepare_3d_run(&eval, &run, (W, H)).expect("the Classic 3D run is prepared");
-    assert_eq!(prepared.planes.iter().filter(|p| p.draw).count(), 3);
-    let mut enc = crate::context::Enc::new(&ctx);
-    let canvas = enc.image(W, H);
-    assert!(crate::classic3d::draw_run(&mut enc, &prepared, &canvas).is_none(), "missing shader requests CPU fallback");
     let cpu = Renderer::new(&s.p, &Pattern, RenderOpts { backend: Backend::Cpu, ..opts() }).comp_frame_cpu(s.cid, Tick::ZERO);
-    assert!(cpu.data.iter().filter(|p| p[3] > 0.5).count() > (W * H / 3) as usize);
+    let mut r = Renderer::new(&s.p, &Pattern, RenderOpts { backend: Backend::Gpu, ..opts() });
+    r.accel = Some(&g);
+    eprintln!("Classic 3D fallback diagnostic: beginning full GPU render at {:?}", start.elapsed());
+    let rendered = g.render(&r, s.cid, Tick::ZERO);
+    eprintln!("Classic 3D fallback diagnostic: full GPU render={}, elapsed={:?}, health={:?}", rendered.is_some(), start.elapsed(), g.context().check_health());
+    let img = rendered.expect("the GPU compositor survives a missing Classic 3D kernel");
+    check("Classic 3D kernel CPU fallback", Some(diff(&cpu, &img, tolerance(BitDepth::Bpc32))), 0.0);
 }
 
 /// Classic 3D bokeh depth of field runs on the GPU: iris shapes, highlights, fringe, Fast
