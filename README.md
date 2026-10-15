@@ -36,3 +36,11 @@ EffectCraft describes itself as an alpha compositor and cautions against relying
 4. Compare output against simple independent reference cases before claiming reliable production workflows.
 
 The remaining ArtCraft counterparts and foundation choices are recorded in [the suite coverage plan](docs/STRIKE_COVERAGE_PLAN.md).
+
+## Screenshots from the verified hosted run
+
+The [green Ubuntu 24.04 run](https://github.com/Gerbzz/EffectStrike/actions/runs/38717418028) captured these exact images at code revision `11ffad2`. The Home image used Xvfb at 1280x800 with Mesa llvmpipe software OpenGL; the render image came from the CPU CLI compositor using generated media. They do not demonstrate Windows/macOS behavior or an interactive editing session. See each image's attribution sidecar and [asset index](ATTRIBUTION.md).
+
+![EffectStrike Home on hosted Ubuntu 24.04, with the PWDS company mark](docs/images/effectstrike-home-ubuntu24.png)
+
+![Synthetic 160x90 composition frame produced by EffectStrike's CPU renderer](docs/images/effectstrike-synthetic-render.png)

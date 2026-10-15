@@ -1,0 +1,8 @@
+asset:        effectstrike-home-ubuntu24.png
+title:        EffectStrike native Home screen on hosted Ubuntu 24.04
+author:       EffectStrike contributors; captured for Gerbzz
+source:       https://github.com/Gerbzz/EffectStrike/actions/runs/38717418028
+license:      LicenseRef-PWDS-Brand for the embedded PWDS mark; MIT OR Apache-2.0 for the other app UI
+license-file: ../../assets/branding/LICENSE-brand.txt; ../../LICENSE-MIT; ../../LICENSE-APACHE
+added:        2026-10-15 by Gerbzz
+notes:        Unmodified run artifact from commit 11ffad2e72bbb5683a62348f03600bae62bb2d40. Ubuntu 24.04, Xvfb 1280x800, Mesa llvmpipe software OpenGL. This proves the Home screen was drawn in that environment, not Windows or macOS acceptance.
