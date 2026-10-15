@@ -2,9 +2,9 @@
 
 **Open-source motion graphics and visual effects in Rust.** Build layered compositions, animate properties, preview frames in a native editor, and render from an automation-friendly CLI.
 
-![EffectStrike native Windows compositor showing the synthetic project](docs/images/effectstrike-editor-windows2025.png)
+![EffectStrike native Windows compositor showing the synthetic project](docs/images/effectstrike-editor-windows2025-cropped.png)
 
-*The actual EffectStrike desktop process on a standard hosted Windows 2025 runner. Its saved synthetic project shows the composition viewer, project bin, two layers, timeline, and a 2D preview. This unmodified 1040×736 window capture comes from [green run 38753532962](https://github.com/Gerbzz/EffectStrike/actions/runs/38753532962).*
+*The actual EffectStrike desktop process on a standard hosted Windows 2025 runner. Its saved synthetic project shows the composition viewer, project bin, two layers, timeline, and a 2D preview. This pixel-exact 1024×720 app-window crop comes from [green run 38753532962](https://github.com/Gerbzz/EffectStrike/actions/runs/38753532962); the [full 1040×736 capture](docs/images/effectstrike-editor-windows2025.png) is retained.*
 
 EffectStrike is an independent early-alpha fork of the complete [EffectCraft](https://github.com/storytold/effectcraft) compositor. This Rust workspace contains the desktop editor, project and render engine, effects, CLI, web frontend source and tests. The features below are present in the foundation; the [verified workflows](#verified-workflows) show which paths this fork has exercised.
 
@@ -14,9 +14,9 @@ EffectStrike is an independent early-alpha fork of the complete [EffectCraft](ht
 - **Animate properties:** keyframes, timeline and graph-editor source, expressions, cameras and lights support motion-design workflows.
 - **Render and automate:** the render queue and CLI can produce frames and sequences. The native `.ecproj` format and internal `effectcraft-*` package names remain for compatibility.
 
-![EffectStrike native Ubuntu Home view with the approved PWDS publisher mark](docs/images/effectstrike-home-ubuntu24.png)
+![EffectStrike native Ubuntu Home view with the approved PWDS publisher mark](docs/images/effectstrike-home-ubuntu24-cropped.png)
 
-*The real first-run Home window under Ubuntu 24.04/Xvfb and Mesa llvmpipe, captured at 1280×800 in [green run 38717418028](https://github.com/Gerbzz/EffectStrike/actions/runs/38717418028). The approved PWDS mark appears on its light plaque.*
+*The real first-run Home window under Ubuntu 24.04/Xvfb and Mesa llvmpipe, cropped exactly to its 1216×672 app bounds from [green run 38717418028](https://github.com/Gerbzz/EffectStrike/actions/runs/38717418028). The [full 1280×800 capture](docs/images/effectstrike-home-ubuntu24.png) is retained. The approved PWDS mark appears on its light plaque.*
 
 ## Verified workflows
 
