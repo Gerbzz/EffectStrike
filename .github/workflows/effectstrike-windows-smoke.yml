@@ -1,0 +1,65 @@
+name: EffectStrike Windows bounded smoke
+
+on:
+  push:
+    branches: [feature/desktop-identity-copy]
+    paths:
+      - .github/workflows/effectstrike-windows-smoke.yml
+      - scripts/ci_windows_desktop.ps1
+      - scripts/ci_synthetic_render.py
+      - apps/**
+      - crates/**
+      - Cargo.toml
+      - Cargo.lock
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-editor-and-render:
+    if: github.repository == 'Gerbzz/EffectStrike'
+    runs-on: windows-2025
+    timeout-minutes: 55
+    env:
+      CARGO_BUILD_JOBS: '2'
+      CARGO_INCREMENTAL: '0'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Install pinned Rust
+        shell: pwsh
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Build complete native editor and CLI
+        shell: pwsh
+        run: cargo +1.95.0 build --locked -p effectcraft -p effectcraft-cli
+      - name: Check Windows identity and synthetic save, reopen, animation and render
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force smoke-windows | Out-Null
+          $version = & target/debug/effectcraft.exe --version
+          if ($LASTEXITCODE -ne 0 -or $version -notmatch '^EffectStrike ') { throw "Unexpected desktop identity: $version" }
+          $info = & target/debug/effectcraft-cli.exe info --empty
+          if ($LASTEXITCODE -ne 0 -or $info -notmatch '^EffectStrike ') { throw "Unexpected CLI identity: $info" }
+          python scripts/ci_synthetic_render.py target/debug/effectcraft-cli.exe smoke-windows
+          if ($LASTEXITCODE -ne 0) { throw 'Windows synthetic project workflow failed' }
+      - name: Run Windows CLI regression tests
+        shell: pwsh
+        run: cargo +1.95.0 test --locked -p effectcraft-cli
+      - name: Launch the actual editor with the saved project and attempt screen capture
+        shell: pwsh
+        run: ./scripts/ci_windows_desktop.ps1 -Executable target/debug/effectcraft.exe -Project smoke-windows/synthetic.ecproj -Output smoke-windows
+      - name: Preserve only small Windows evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: effectstrike-windows-evidence
+          path: |
+            smoke-windows/render.png
+            smoke-windows/editor.png
+            smoke-windows/desktop-status.json
+          retention-days: 1
+          if-no-files-found: ignore
