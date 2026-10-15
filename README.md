@@ -16,7 +16,7 @@ cargo run --release -p effectcraft -- --demo
 cargo run --release -p effectcraft-cli -- render --out demo.mp4
 ```
 
-Rust 1.95 or newer is required. These commands are documented from upstream and **have not been run for this fork**. No installer or signed release is offered here yet.
+Rust 1.95 or newer is required. The release-mode `cargo run` commands above are documented from upstream and have not been run for this fork. A hosted Ubuntu 24.04 job has built both debug binaries and exercised the CLI with a synthetic project. No installer or signed release is offered here yet.
 
 ## Integration status
 
@@ -24,14 +24,14 @@ Rust 1.95 or newer is required. These commands are documented from upstream and 
 - The approved PWDS company mark appears on a light plaque on Home and About. A distinct illustrated EffectStrike app icon has not been supplied; the openly licensed upstream app icon remains in the source for now. See [brand attribution](assets/branding/PWDS-logo.png.attribution).
 - ArtCraft trademark image files were removed. The upstream code, legal notices, third-party attributions, and open licences remain.
 - Upstream GitHub Actions workflows were removed so publishing this source does not start unapproved hosted builds or release jobs.
-- **No local compile, render, native interaction, or installer test has run.** Another suite app owns the local build slot. See [integration and verification ledger](docs/EFFECTSTRIKE_STATUS.md).
+- No local compile, render, native interaction, or installer test has run; another suite app owns the local build slot. [Bounded standard-runner validation](https://github.com/Gerbzz/EffectStrike/actions/runs/38717418028) built the desktop and CLI apps, imported a generated PNG, saved/reopened a composition, animated it with two keys, rendered a frame and a three-frame PNG sequence, passed 25 CLI and two Linux desktop-entry tests, and captured the native Home screen on an Ubuntu/Xvfb software display. The [verification ledger](docs/EFFECTSTRIKE_STATUS.md) records the environment and limits.
 
 EffectCraft describes itself as an alpha compositor and cautions against relying on it for client work. EffectStrike is also pre-release. Existing After Effects `.aep` and `.aepx` projects and plug-ins are not supported by the upstream foundation. Internal menus, translations, web branding, app icon, and packaging still need fork-specific review before distribution.
 
 ## Next checkpoints
 
-1. Review and test project creation, footage import, keyframe animation, effect application, save/reopen, and render output on a free, bounded build route once the build slot is available.
-2. Inspect the native UI at common window sizes, including the new Home and About mark layout. Fix any interaction or accessibility regressions found.
+1. Extend the passing synthetic project path to representative footage, effects, text, graph editing, and video export. Validate native Windows operation when the suite build slot is available.
+2. Inspect Home and About at more window sizes and on Windows/macOS; test dialogs, keyboard actions, and accessibility. The hosted Linux Home capture is a visual baseline, not an interactive acceptance test.
 3. Complete application identity across CLI, web, localized strings, icons, packaging, and installer metadata using approved creative-category artwork.
 4. Compare output against simple independent reference cases before claiming reliable production workflows.
 
