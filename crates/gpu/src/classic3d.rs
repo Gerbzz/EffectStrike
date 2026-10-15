@@ -131,6 +131,12 @@ pub(crate) fn draw_run(e: &mut Enc, run: &Run3d, canvas: &GpuImage) -> Option<Gp
     if boxes.is_empty() {
         return Some(canvas.clone());
     }
+    // A failed Classic 3D pipeline must be noticed before uploads, atlas copies, and scratch
+    // writes are queued. The CPU fallback downloads the current canvas; unrelated 3D work in
+    // that submission can stall readback on software adapters even though no 3D pass will run.
+    if e.g.unavailable_kernels().iter().any(|(entry, _)| *entry == "classic3d") {
+        return None;
+    }
     if max_overlap(&boxes) > MAX_FRAGS
         || run.planes.iter().any(|p| p.winv.0[3] != [0.0, 0.0, 0.0, 1.0] || p.geos.iter().any(|g| g.world.0[3] != [0.0, 0.0, 0.0, 1.0]))
     {
