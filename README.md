@@ -24,14 +24,14 @@ Rust 1.95 or newer is required. The release-mode `cargo run` commands above are 
 - The approved PWDS company mark appears on a light plaque on Home and About. A distinct illustrated EffectStrike app icon has not been supplied; the openly licensed upstream app icon remains in the source for now. See [brand attribution](assets/branding/PWDS-logo.png.attribution).
 - ArtCraft trademark image files were removed. The upstream code, legal notices, third-party attributions, and open licences remain.
 - Upstream GitHub Actions workflows were removed so publishing this source does not start unapproved hosted builds or release jobs.
-- No local compile, render, native interaction, or installer test has run; another suite app owns the local build slot. [Bounded standard-runner validation](https://github.com/Gerbzz/EffectStrike/actions/runs/38717418028) built the desktop and CLI apps, imported a generated PNG, saved/reopened a composition, animated it with two keys, rendered a frame and a three-frame PNG sequence, passed 25 CLI and two Linux desktop-entry tests, and captured the native Home screen on an Ubuntu/Xvfb software display. The [verification ledger](docs/EFFECTSTRIKE_STATUS.md) records the environment and limits.
+- No local compile, render, native interaction, or installer test has run; another suite app owns the local build slot. [Bounded Ubuntu validation](https://github.com/Gerbzz/EffectStrike/actions/runs/38753532705) and [bounded Windows validation](https://github.com/Gerbzz/EffectStrike/actions/runs/38753532962) built the desktop and CLI apps, imported a generated PNG, saved/reopened a composition, animated it with two keys, rendered a frame and a PNG sequence, and passed 25 CLI tests on each platform. The Windows editor opened the saved composition and drew a visible preview on the hosted software DX12 adapter. The [verification ledger](docs/EFFECTSTRIKE_STATUS.md) records the exact evidence and limits.
 
 EffectCraft describes itself as an alpha compositor and cautions against relying on it for client work. EffectStrike is also pre-release. Existing After Effects `.aep` and `.aepx` projects and plug-ins are not supported by the upstream foundation. Internal menus, translations, web branding, app icon, and packaging still need fork-specific review before distribution.
 
 ## Next checkpoints
 
-1. Extend the passing synthetic project path to representative footage, effects, text, graph editing, and video export. Validate native Windows operation when the suite build slot is available.
-2. Inspect Home and About at more window sizes and on Windows/macOS; test dialogs, keyboard actions, and accessibility. The hosted Linux Home capture is a visual baseline, not an interactive acceptance test.
+1. Extend the passing synthetic project path to representative footage, effects, text, graph editing, and video export. Check GPU effects on real Windows hardware; the hosted software adapter rejected classic3d shader compilation.
+2. Inspect Home and About at more window sizes and on Windows/macOS; test dialogs, keyboard actions, and accessibility. The hosted Linux Home and Windows saved-project editor captures are visual baselines, not interactive editing acceptance tests.
 3. Complete application identity across CLI, web, localized strings, icons, packaging, and installer metadata using approved creative-category artwork.
 4. Compare output against simple independent reference cases before claiming reliable production workflows.
 
@@ -44,3 +44,7 @@ The [green Ubuntu 24.04 run](https://github.com/Gerbzz/EffectStrike/actions/runs
 ![EffectStrike Home on hosted Ubuntu 24.04, with the PWDS company mark](docs/images/effectstrike-home-ubuntu24.png)
 
 ![Synthetic 160x90 composition frame produced by EffectStrike's CPU renderer](docs/images/effectstrike-synthetic-render.png)
+
+The [green Windows 2025 run](https://github.com/Gerbzz/EffectStrike/actions/runs/38753532962) at code revision `d4a2b76` captured the actual editor with its saved two-layer synthetic composition. The hosted runner used Microsoft Basic Render Driver software DX12; its GPU compositor's classic3d shaders failed to initialize, while the 2D project preview drew. This screenshot does not verify GPU effects or editing interactions.
+
+![EffectStrike native Windows editor showing the saved synthetic composition and timeline](docs/images/effectstrike-editor-windows2025.png)
