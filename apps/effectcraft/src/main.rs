@@ -324,6 +324,8 @@ fn main() -> eframe::Result {
                 window: window::Tracker::new(opened, saved_window, control_port.is_none()),
                 launch,
                 drawn: false,
+                first_logic: true,
+                first_ui: true,
             }))
         }),
     );
@@ -405,18 +407,35 @@ struct Desktop {
     launch: launch_guard::Launch,
     /// The first frame was drawn (logged once).
     drawn: bool,
+    /// One-time startup milestones distinguish UI work from graphics presentation delays.
+    first_logic: bool,
+    first_ui: bool,
 }
 
 impl eframe::App for Desktop {
     fn logic(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        if self.first_logic {
+            log::info!("first frame logic started");
+        }
         #[cfg(target_os = "macos")]
         self.menu.update(&mut self.app, ctx);
         self.app.logic(ctx, frame);
+        if self.first_logic {
+            log::info!("first frame logic finished");
+            self.first_logic = false;
+        }
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
+        if self.first_ui {
+            log::info!("first frame UI started");
+        }
         self.app.ui(ui, frame);
+        if self.first_ui {
+            log::info!("first frame app UI finished");
+        }
         self.window.frame(ui.ctx(), self.app.session.config.as_deref());
+        self.first_ui = false;
         if !self.drawn {
             self.drawn = true;
             log::info!("first frame drawn");
