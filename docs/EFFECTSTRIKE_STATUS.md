@@ -21,10 +21,22 @@ The published root commit deliberately omits upstream history so the removed tra
 | Create and edit a composition with layers | Present: project model, engine commands, egui timeline/viewer | Headless CLI created a 160x90 comp with a solid and imported PNG. The saved project visibly opened in the Windows editor; interactive desktop editing not tested. |
 | Import footage and save/reopen `.ecproj` | Present: media, project serialization, UI and CLI commands | Generated PNG imported; `.ecproj` saved, reopened, and rendered on Ubuntu and Windows. Video/RAW import not tested. |
 | Animate with keyframes and graph editor | Present: keyframe crate and UI panels | Two imported-layer position keys saved/reopened; frames at 0 and 0.5 seconds differed. Graph editor not tested. |
-| Apply effects and expressions | Present: effects registry, expression engine, controls | Not run |
+| Apply effects and expressions | Present: effects registry, expression engine, controls | Generated checkerboard footage with Gaussian Blur 16 and a `value + [0, 20]` position expression was saved and reopened; decoded CPU frames changed 4,476 and 5,266 RGB pixels respectively in green [Ubuntu run 38953739017](https://github.com/Gerbzz/EffectStrike/actions/runs/38953739017) and [Windows run 38953739288](https://github.com/Gerbzz/EffectStrike/actions/runs/38953739288). Interactive effect controls, the effect-bearing project in the native editor, and broader effects are not verified. |
 | Use cameras, lights, and 3D layers | Present: model/render crates and viewer controls | Not run |
 | Queue and export a render | Present: export/render queue and CLI | CPU `render-frame` made a 160x90 PNG; render queue exported three PNG frames. Video formats not tested. |
 | Home/About identity | EffectStrike strings and existing PWDS logo integrated in desktop source | Home captured at 1280x800 on Ubuntu 24.04/Xvfb/Mesa llvmpipe. Windows editor title and CLI identity confirmed. About is source-reviewed, not visually tested. |
+
+## CPU effect and expression proof
+
+The [generated-media smoke script](../scripts/ci_synthetic_render.py) uses the full headless application workflow. It imports a checkerboard PNG, creates two position keys, saves and reopens `.ecproj`, applies `ec.blur.gaussian`, sets `blurriness` to 16, reopens again to read that parameter, then saves `value + [0, 20]` on the footage layer's position and reopens again to check its evaluated value `[32, 65, 0]`. Each stage renders at composition time 0 seconds on the CPU. The script decodes PNG RGB pixels rather than comparing compressed file bytes.
+
+| Before effect | Gaussian Blur 16 | Blur plus position expression |
+| --- | --- | --- |
+| ![Generated checkerboard before effect](images/effectstrike-effect-before.png) | ![Checkerboard after Gaussian Blur](images/effectstrike-effect-after.png) | ![Blurred checkerboard moved by expression](images/effectstrike-expression-after.png) |
+
+The source frames are unmodified small artifacts from [green Ubuntu run 38949302469](https://github.com/Gerbzz/EffectStrike/actions/runs/38949302469), exact tested code `8a67d4acd7236e7268fa5fd7e078d8248155ebe1`. The Windows CPU render step at that same commit produced the same 4,476 and 5,266 RGB changes; all three corresponding PNG files were SHA-256 identical to the Ubuntu frames. Static screenshots and RGB difference counts establish this one synthetic 2D CPU path; they do not validate real GPU effects, the full effects catalog, or interactive Effect Controls.
+
+The [Windows run 38949302434](https://github.com/Gerbzz/EffectStrike/actions/runs/38949302434) completed the full native and CLI build and the CPU proof, then failed when opening the effect-bearing saved project in the editor. The process remained running but its window stayed 16x16 after the bounded capture wait on Microsoft Basic Render Driver; no readable GUI screenshot or interactive effect workflow is claimed. Its later CLI regression step was skipped. Commit `68370ef` keeps an independently saved pre-effect `.ecproj` for the established native editor smoke and places CLI regressions before GUI capture. The exact-head [Ubuntu run 38953739017](https://github.com/Gerbzz/EffectStrike/actions/runs/38953739017) and [Windows run 38953739288](https://github.com/Gerbzz/EffectStrike/actions/runs/38953739288) both passed. Windows completed all 25 CLI tests and captured the pre-effect project in the native editor. The root cause of the 16x16 effect-project window has not been established; the green native capture is not a claim that the effect-bearing project opens interactively.
 
 ## Checks completed on this branch
 
