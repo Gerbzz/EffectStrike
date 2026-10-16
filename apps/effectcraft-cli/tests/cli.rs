@@ -285,19 +285,24 @@ fn render_out_is_relative_to_the_working_directory() {
         let v: Value = serde_json::from_slice(&o.stdout).unwrap();
         PathBuf::from(v["rendered"][0]["output"].as_str().unwrap())
     };
+    // Windows may spell the same absolute path with or without its \\?\ prefix.
+    // Resolve both sides so this test checks where the render actually landed.
+    let assert_same_file = |actual: &std::path::Path, expected: &std::path::Path| {
+        assert_eq!(actual.canonicalize().unwrap(), expected.canonicalize().unwrap());
+    };
     // A path that already names the project folder is not doubled.
     let done = render(&root, "proj/x.ecproj", "proj/out/d.gif");
-    assert_eq!(done, root.join("proj/out/d.gif"));
+    assert_same_file(&done, &root.join("proj/out/d.gif"));
     assert!(done.exists() && !proj.join("proj").exists());
     // Another working directory: the file lands there, not beside the project.
     let done = render(&elsewhere, project.to_str().unwrap(), "out/card.gif");
-    assert_eq!(done, elsewhere.join("out/card.gif"));
+    assert_same_file(&done, &elsewhere.join("out/card.gif"));
     assert!(done.exists() && !proj.join("out/card.gif").exists());
     // `./f.gif` too.
-    assert_eq!(render(&elsewhere, project.to_str().unwrap(), "./f.gif"), elsewhere.join("./f.gif"));
+    assert_same_file(&render(&elsewhere, project.to_str().unwrap(), "./f.gif"), &elsewhere.join("./f.gif"));
     // An absolute path is unchanged.
     let abs = root.join("abs.gif");
-    assert_eq!(render(&elsewhere, project.to_str().unwrap(), abs.to_str().unwrap()), abs);
+    assert_same_file(&render(&elsewhere, project.to_str().unwrap(), abs.to_str().unwrap()), &abs);
     assert!(abs.exists());
     let _ = std::fs::remove_dir_all(&root);
 }

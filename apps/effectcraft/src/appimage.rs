@@ -40,7 +40,7 @@ pub fn exec_arg(path: &str) -> String {
 /// The hidden desktop entry for the AppImage at `appimage`.
 pub fn entry(appimage: &str) -> String {
     format!(
-        "[Desktop Entry]\nType=Application\nName=EffectCraft\nComment=Motion graphics and visual effects compositor\nExec={} %F\nIcon={APP_ID}\nTerminal=false\nStartupWMClass={APP_ID}\nNoDisplay=true\n{MARKER}\n",
+        "[Desktop Entry]\nType=Application\nName=EffectStrike\nComment=Motion graphics and visual effects compositor\nExec={} %F\nIcon={APP_ID}\nTerminal=false\nStartupWMClass={APP_ID}\nNoDisplay=true\n{MARKER}\n",
         exec_arg(appimage)
     )
 }
@@ -99,6 +99,7 @@ mod tests {
         assert_eq!(exec_arg("/home/a/EffectCraft.AppImage"), "\"/home/a/EffectCraft.AppImage\"");
         assert_eq!(exec_arg("/a b/$x\"y`z\\w%"), "\"/a b/\\\\$x\\\\\"y\\\\`z\\\\\\\\w%%\"");
         let e = entry("/opt/EffectCraft.AppImage");
+        assert!(e.contains("Name=EffectStrike\n"));
         assert!(e.contains("Exec=\"/opt/EffectCraft.AppImage\" %F\n") && e.contains("NoDisplay=true\n") && e.contains("Icon=ai.storyteller.effectcraft\n"));
     }
 
