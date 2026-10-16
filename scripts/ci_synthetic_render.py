@@ -188,7 +188,8 @@ def main() -> None:
     assert set_expr["result"] == expression, set_expr
     evaluated = cli(binary, "get", comp["name"], str(footage_layer["id"]), "transform/position", "--time", "0", "--project", str(project))
     assert evaluated["expression"] == expression and evaluated.get("expressionError") is None, evaluated
-    assert evaluated["value"] == [32, 45] and evaluated["evaluated"] == [32, 65], evaluated
+    # Layer transforms store a third (Z) component even when the UI shows a 2D position.
+    assert evaluated["value"] == [32, 45, 0] and evaluated["evaluated"] == [32, 65, 0], evaluated
     cli(binary, "render-frame", "--project", str(project), "--time", "0", "--out", str(expression_after))
     expression_changed = changed_pixels(effect_after, expression_after)
     assert expression_changed > 50, f"Position expression changed only {expression_changed} RGB pixels"
