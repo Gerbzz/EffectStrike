@@ -2,7 +2,7 @@ name: EffectStrike Windows bounded smoke
 
 on:
   push:
-    branches: [feature/desktop-identity-copy]
+    branches: [feature/desktop-identity-copy, feature/effects-expression-proof]
     paths:
       - .github/workflows/effectstrike-windows-smoke.yml
       - scripts/ci_windows_desktop.ps1
@@ -59,6 +59,9 @@ jobs:
           name: effectstrike-windows-evidence
           path: |
             smoke-windows/render.png
+            smoke-windows/effect-before.png
+            smoke-windows/effect-after.png
+            smoke-windows/expression-after.png
             smoke-windows/editor.png
             smoke-windows/desktop-status.json
           retention-days: 1

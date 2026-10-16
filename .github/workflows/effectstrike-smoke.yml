@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/desktop-identity-copy
+      - feature/effects-expression-proof
     paths-ignore:
       - 'docs/**'
       - 'README.md'
@@ -70,6 +71,9 @@ jobs:
           name: effectstrike-hosted-smoke-images
           path: |
             smoke-output/render.png
+            smoke-output/effect-before.png
+            smoke-output/effect-after.png
+            smoke-output/expression-after.png
             smoke-output/home.png
             smoke-output/desktop.log
             smoke-output/xvfb.log
