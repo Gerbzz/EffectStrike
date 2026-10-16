@@ -170,6 +170,8 @@ def main() -> None:
     assert all(path.read_bytes().startswith(b"\x89PNG\r\n\x1a\n") for path in sequence)
 
     # Real CPU compositor output, not just an effect record in the saved project.
+    # Retain the already verified 2D project for native editor startup separately.
+    (output / "editor-baseline.ecproj").write_bytes(project.read_bytes())
     effect_before = output / "effect-before.png"
     effect_after = output / "effect-after.png"
     expression_after = output / "expression-after.png"

@@ -46,12 +46,12 @@ jobs:
           if ($LASTEXITCODE -ne 0 -or @($info)[0] -notmatch '^EffectStrike ') { throw "Unexpected CLI identity: $info" }
           python scripts/ci_synthetic_render.py target/debug/effectcraft-cli.exe smoke-windows
           if ($LASTEXITCODE -ne 0) { throw 'Windows synthetic project workflow failed' }
-      - name: Launch the actual editor with the saved project and attempt screen capture
-        shell: pwsh
-        run: ./scripts/ci_windows_desktop.ps1 -Executable target/debug/effectcraft.exe -Project smoke-windows/synthetic.ecproj -Output smoke-windows
       - name: Run Windows CLI regression tests
         shell: pwsh
         run: cargo +1.95.0 test --locked -p effectcraft-cli
+      - name: Launch the actual editor with the saved pre-effect project and attempt screen capture
+        shell: pwsh
+        run: ./scripts/ci_windows_desktop.ps1 -Executable target/debug/effectcraft.exe -Project smoke-windows/editor-baseline.ecproj -Output smoke-windows
       - name: Preserve only small Windows evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
