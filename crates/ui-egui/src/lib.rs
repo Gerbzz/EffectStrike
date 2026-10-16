@@ -774,18 +774,6 @@ impl EffectcraftApp {
             info.device_type,
             if info.driver.is_empty() { String::new() } else { format!(", {} {}", info.driver, info.driver_info) }
         ));
-        // Microsoft's hosted software DX12 adapter consistently rejects the Classic 3D
-        // shader after a long synchronous compile. It can still draw egui and CPU frames.
-        if cfg!(target_os = "windows")
-            && info.backend == eframe::wgpu::Backend::Dx12
-            && info.device_type == eframe::wgpu::DeviceType::Cpu
-            && info.name == "Microsoft Basic Render Driver"
-        {
-            let note = "GPU compositor skipped on Microsoft Basic Render Driver; using CPU compositing";
-            log::info!("{note}");
-            self.session.accel_note = Some(note.into());
-            return;
-        }
         // Backend validation can panic on shader compilation even when device creation
         // succeeded. Keep the document and the egui renderer, and use CPU compositing.
         log::info!("GPU compositor setup started on {:?} {:?}", info.backend, info.device_type);
