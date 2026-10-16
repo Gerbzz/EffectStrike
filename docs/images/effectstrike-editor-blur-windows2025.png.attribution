@@ -1,0 +1,8 @@
+asset:        effectstrike-editor-blur-windows2025.png
+title:        EffectStrike native editor with generated Gaussian Blur composition
+author:       EffectStrike contributors; captured for Gerbzz
+source:       https://github.com/Gerbzz/EffectStrike/actions/runs/38957719951
+license:      MIT OR Apache-2.0
+license-file: ../../LICENSE-MIT; ../../LICENSE-APACHE
+added:        2026-10-16 by Gerbzz
+notes:        Unmodified native-window capture from code commit 76ecce78ce73904989ad74af45c3753d19f6438a on hosted Windows 2025. The generated editor-blur.ecproj visibly shows Gaussian Blur 16 on the checkerboard over blue background. Microsoft Basic Render Driver rejected optional Classic 3D initialization before CPU preview. The screenshot does not establish interactive effect controls, broader effects, or GPU rendering.

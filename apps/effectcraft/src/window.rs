@@ -137,6 +137,7 @@ pub fn restore(window: &winit::window::Window, saved: Option<WindowGeometry>) ->
     }
     // Returns the new size when it applies at once; either way the window gets it.
     let _ = window.request_inner_size(LogicalSize::new(g.size[0], g.size[1]));
+    log::info!("startup window requested {:?}, immediate inner size {:?}", g.size, window.inner_size());
     if g.maximized {
         window.set_maximized(true);
     }

@@ -181,6 +181,7 @@ def main() -> None:
     cli(binary, "exec", "prop.set", "--params", json.dumps({"layer": footage_layer["id"], "path": "effects/#1/blurriness", "value": 16}), "--project", str(project), "--save")
     blur = cli(binary, "get", comp["name"], str(footage_layer["id"]), "effects/#1/blurriness", "--project", str(project))
     assert blur["value"] == 16, blur
+    (output / "editor-blur.ecproj").write_bytes(project.read_bytes())
     cli(binary, "render-frame", "--project", str(project), "--time", "0", "--out", str(effect_after))
     effect_changed = changed_pixels(effect_before, effect_after)
     assert effect_changed > 50, f"Gaussian Blur changed only {effect_changed} RGB pixels"

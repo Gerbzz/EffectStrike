@@ -776,7 +776,10 @@ impl EffectcraftApp {
         ));
         // Backend validation can panic on shader compilation even when device creation
         // succeeded. Keep the document and the egui renderer, and use CPU compositing.
+        log::info!("GPU compositor setup started on {:?} {:?}", info.backend, info.device_type);
+        let setup_started = std::time::Instant::now();
         let gpu = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| effectcraft_gpu::Gpu::new(&rs.adapter, rs.device.clone(), rs.queue.clone())));
+        log::info!("GPU compositor setup returned after {:.1}s", setup_started.elapsed().as_secs_f64());
         match gpu {
             Ok(Ok(g)) => {
                 if let Some(bridge) = &self.gpu_failures {

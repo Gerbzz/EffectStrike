@@ -1,0 +1,97 @@
+name: EffectStrike effect project window probe
+
+on:
+  push:
+    branches: [feature/effect-window-probe]
+    paths:
+      - .github/workflows/effectstrike-effect-window-probe.yml
+      - scripts/ci_synthetic_render.py
+      - scripts/ci_windows_desktop.ps1
+      - apps/effectcraft/src/**
+      - crates/ui-egui/src/**
+      - Cargo.toml
+      - Cargo.lock
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare-first-window:
+    if: github.repository == 'Gerbzz/EffectStrike'
+    runs-on: windows-2025
+    timeout-minutes: 55
+    env:
+      CARGO_BUILD_JOBS: '2'
+      CARGO_INCREMENTAL: '0'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Install pinned Rust
+        shell: pwsh
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Build native editor and CLI
+        shell: pwsh
+        run: cargo +1.95.0 build --locked -p effectcraft -p effectcraft-cli
+      - name: Generate the baseline, blur-only, and blur-plus-expression saved projects
+        shell: pwsh
+        run: |
+          python scripts/ci_synthetic_render.py target/debug/effectcraft-cli.exe smoke-probe
+          if ($LASTEXITCODE -ne 0) { throw 'Synthetic project generation or CPU render proof failed' }
+          foreach ($project in @('editor-baseline.ecproj', 'editor-blur.ecproj', 'synthetic.ecproj')) {
+            if (!(Test-Path -LiteralPath (Join-Path smoke-probe $project))) { throw "Missing saved project: $project" }
+          }
+      - name: Probe baseline project native window
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          New-Item -ItemType Directory -Force -Path 'smoke-probe/baseline', 'smoke-probe/config-baseline' | Out-Null
+          $env:EFFECTCRAFT_CONFIG_DIR = (Resolve-Path smoke-probe/config-baseline).Path
+          Start-Transcript -Path smoke-probe/baseline/probe.log | Out-Null
+          try { ./scripts/ci_windows_desktop.ps1 -Executable target/debug/effectcraft.exe -Project smoke-probe/editor-baseline.ecproj -Output smoke-probe/baseline -TimeoutSeconds 150 }
+          finally { Stop-Transcript | Out-Null }
+      - name: Probe blur-only project native window
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          New-Item -ItemType Directory -Force -Path 'smoke-probe/blur', 'smoke-probe/config-blur' | Out-Null
+          $env:EFFECTCRAFT_CONFIG_DIR = (Resolve-Path smoke-probe/config-blur).Path
+          Start-Transcript -Path smoke-probe/blur/probe.log | Out-Null
+          try { ./scripts/ci_windows_desktop.ps1 -Executable target/debug/effectcraft.exe -Project smoke-probe/editor-blur.ecproj -Output smoke-probe/blur -TimeoutSeconds 150 }
+          finally { Stop-Transcript | Out-Null }
+      - name: Probe blur-plus-expression project native window
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          New-Item -ItemType Directory -Force -Path 'smoke-probe/blur-expression', 'smoke-probe/config-blur-expression' | Out-Null
+          $env:EFFECTCRAFT_CONFIG_DIR = (Resolve-Path smoke-probe/config-blur-expression).Path
+          Start-Transcript -Path smoke-probe/blur-expression/probe.log | Out-Null
+          try { ./scripts/ci_windows_desktop.ps1 -Executable target/debug/effectcraft.exe -Project smoke-probe/synthetic.ecproj -Output smoke-probe/blur-expression -TimeoutSeconds 150 }
+          finally { Stop-Transcript | Out-Null }
+      - name: Require rendered editor content in every saved project
+        shell: pwsh
+        run: |
+          $failed = @()
+          foreach ($case in @('baseline', 'blur', 'blur-expression')) {
+            $path = Join-Path "smoke-probe/$case" 'desktop-status.json'
+            if (!(Test-Path -LiteralPath $path)) { $failed += "$case missing status"; continue }
+            $status = Get-Content -Raw -LiteralPath $path | ConvertFrom-Json
+            Write-Host "$case capture=$($status.capture) sized_at=$($status.first_sized_at_seconds)s content_at=$($status.content_ready_at_seconds)s pixels=$($status.pixels | ConvertTo-Json -Compress)"
+            if ($status.capture -ne 'content_verified') { $failed += "$case not content verified" }
+          }
+          if ($failed.Count) { throw ($failed -join '; ') }
+      - name: Preserve bounded project-specific diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: effectstrike-effect-window-probe
+          path: |
+            smoke-probe/*/desktop-status.json
+            smoke-probe/*/probe.log
+            smoke-probe/*/editor.png
+            smoke-probe/*/editor-unready.png
+          retention-days: 1
+          if-no-files-found: warn
