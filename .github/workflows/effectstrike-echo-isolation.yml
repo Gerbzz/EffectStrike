@@ -6,6 +6,7 @@ on:
       - .github/workflows/effectstrike-echo-isolation.yml
       - crates/render/**
       - crates/gpu/**
+      - crates/model/**
       - Cargo.toml
       - Cargo.lock
   workflow_dispatch:
@@ -62,6 +63,7 @@ jobs:
           CARGO_NET_OFFLINE: 'true'
         run: |
           set -o pipefail
+          cargo test --locked -p effectcraft-model stl_ -- --test-threads=2 2>&1 | tee ci-evidence/stl.log
           cargo test --locked -p effectcraft-render --lib -- --test-threads=2 2>&1 | tee ci-evidence/render.log
           cargo test --locked -p effectcraft-gpu --lib tests_fx_noise::echo_after_star_burst_preserves_the_stars -- --exact --nocapture --test-threads=1 2>&1 | tee ci-evidence/echo.log
           grep -F 'effectcraft-gpu tests: adapter ' ci-evidence/echo.log
