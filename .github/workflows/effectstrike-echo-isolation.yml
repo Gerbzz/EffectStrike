@@ -73,8 +73,30 @@ jobs:
         if: matrix.check == 'full-ci'
         env:
           CARGO_NET_OFFLINE: 'true'
+          CARGO_TERM_VERBOSE: 'true'
         run: |
           set -o pipefail
+          sample_resources() {
+            date -u '+%Y-%m-%dT%H:%M:%SZ'
+            nproc
+            ps -C cargo,rustc,clippy-driver,cc,ld,lld,rust-lld -o pid,ppid,stat,etime,time,pcpu,pmem,rss,args --sort=-rss || true
+            free -m
+            df -h .
+            for metric in /proc/stat /proc/pressure/cpu /proc/pressure/memory /proc/pressure/io /sys/fs/cgroup/cpu.stat /sys/fs/cgroup/cpu.max /sys/fs/cgroup/memory.events /sys/fs/cgroup/memory.current /sys/fs/cgroup/memory.max; do
+              if [ -r "$metric" ]; then
+                echo "$metric"
+                cat "$metric"
+              fi
+            done
+          }
+          (
+            while true; do
+              sample_resources | tee -a ci-evidence/resources.log
+              sleep 60
+            done
+          ) &
+          monitor_pid=$!
+          trap 'kill "$monitor_pid" 2>/dev/null || true; wait "$monitor_pid" 2>/dev/null || true' EXIT
           cargo run --locked --package xtask -- ci 2>&1 | tee ci-evidence/full-ci.log
       - name: Require unchanged dependency pins
         if: always()
