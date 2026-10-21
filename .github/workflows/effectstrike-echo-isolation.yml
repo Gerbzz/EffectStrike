@@ -4,9 +4,11 @@ on:
   pull_request:
     paths:
       - .github/workflows/effectstrike-echo-isolation.yml
+      - apps/effectcraft/**
       - crates/render/**
       - crates/gpu/**
       - crates/model/**
+      - crates/ui-egui/src/header.rs
       - Cargo.toml
       - Cargo.lock
   workflow_dispatch:
@@ -61,12 +63,13 @@ jobs:
           rustup target add wasm32-unknown-unknown --toolchain 1.95.0
       - name: Fetch only locked official dependencies and pinned sources
         run: cargo fetch --locked
-      - name: Run CPU renderer tests and require an executed Echo GPU comparison
+      - name: Run CLI and CPU renderer tests and require an executed Echo GPU comparison
         if: matrix.check == 'focused-render-echo'
         env:
           CARGO_NET_OFFLINE: 'true'
         run: |
           set -o pipefail
+          cargo test --locked -p effectcraft --test args -- --test-threads=1 2>&1 | tee ci-evidence/args.log
           cargo test --locked -p effectcraft-model stl_ -- --test-threads=2 2>&1 | tee ci-evidence/stl.log
           cargo test --locked -p effectcraft-render --lib -- --test-threads=2 2>&1 | tee ci-evidence/render.log
           cargo test --locked -p effectcraft-gpu --lib tests_fx_noise::echo_after_star_burst_preserves_the_stars -- --exact --nocapture --test-threads=1 2>&1 | tee ci-evidence/echo.log
