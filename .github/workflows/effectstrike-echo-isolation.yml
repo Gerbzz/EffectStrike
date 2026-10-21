@@ -26,11 +26,15 @@ jobs:
     name: ${{ matrix.check }}
     if: github.repository == 'Gerbzz/EffectStrike'
     runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    timeout-minutes: ${{ matrix.timeout_minutes }}
     strategy:
       fail-fast: false
       matrix:
-        check: [focused-render-echo, full-ci]
+        include:
+          - check: focused-render-echo
+            timeout_minutes: 120
+          - check: full-ci
+            timeout_minutes: 300
     steps:
       - name: Check out the exact proposed head
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
