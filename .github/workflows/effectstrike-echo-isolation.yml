@@ -73,6 +73,7 @@ jobs:
         if: matrix.check == 'full-ci'
         env:
           CARGO_NET_OFFLINE: 'true'
+          CARGO_BUILD_JOBS: '4'
           CARGO_TERM_VERBOSE: 'true'
         run: |
           set -o pipefail
