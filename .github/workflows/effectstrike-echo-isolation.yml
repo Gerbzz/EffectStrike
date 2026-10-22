@@ -82,6 +82,8 @@ jobs:
           CARGO_NET_OFFLINE: 'true'
           CARGO_BUILD_JOBS: '4'
           CARGO_TERM_VERBOSE: 'true'
+          RUST_BACKTRACE: '1'
+          RUST_TEST_NOCAPTURE: '1'
         run: |
           set -o pipefail
           sample_resources() {
@@ -105,7 +107,17 @@ jobs:
           ) &
           monitor_pid=$!
           trap 'kill "$monitor_pid" 2>/dev/null || true; wait "$monitor_pid" 2>/dev/null || true' EXIT
-          cargo run --locked --package xtask -- ci 2>&1 | tee ci-evidence/full-ci.log
+          gpu_status=0
+          for test in tests_fx_pixel2::stylize tests_fx_stylize::posterize_thresholds_strobe_vignette; do
+            if ! cargo test --locked --release -p effectcraft-gpu --lib "$test" -- --exact --nocapture --test-threads=1 2>&1 | tee -a ci-evidence/full-ci.log; then
+              gpu_status=1
+            fi
+          done
+          if ! cargo test --locked --release -p effectcraft-gpu --lib -- --nocapture 2>&1 | tee -a ci-evidence/full-ci.log; then
+            gpu_status=1
+          fi
+          if [ "$gpu_status" -ne 0 ]; then exit "$gpu_status"; fi
+          cargo run --locked --package xtask -- ci 2>&1 | tee -a ci-evidence/full-ci.log
       - name: Require unchanged dependency pins
         if: always()
         run: git diff --exit-code -- Cargo.toml Cargo.lock
