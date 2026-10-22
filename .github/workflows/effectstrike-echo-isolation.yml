@@ -108,14 +108,44 @@ jobs:
           monitor_pid=$!
           trap 'kill "$monitor_pid" 2>/dev/null || true; wait "$monitor_pid" 2>/dev/null || true' EXIT
           gpu_status=0
-          for test in tests_fx_pixel2::stylize tests_fx_stylize::posterize_thresholds_strobe_vignette; do
-            if ! cargo test --locked --release -p effectcraft-gpu --lib "$test" -- --exact --nocapture --test-threads=1 2>&1 | tee -a ci-evidence/full-ci.log; then
+          for test in \
+            tests_fx_pixel2::stylize \
+            tests_fx_stylize::posterize_thresholds_strobe_vignette \
+            tests_fx_warp::smear_and_reshape \
+            tests_fx_warp::warp_styles \
+            tests_init::initialization_unwind_drains_all_scopes_before_the_next_operation \
+            tests_init::opengl_adapters_get_cpu_compositing_at_once \
+            tests_init::scoped_module_and_pipeline_errors_preserve_outer_scope_and_host_handler \
+            tests_particles::particle_world_matches_the_cpu \
+            tests_particles::particle_systems_ii_matches_the_cpu \
+            tests_particles::playground_cannon_matches_the_cpu_and_checkpoints_reuse \
+            tests_particles::particle_effects_render_like_the_cpu
+          do
+            case_log="$RUNNER_TEMP/gpu-${test//::/-}.log"
+            printf 'GPU diagnostic BEGIN %s\n' "$test" | tee -a ci-evidence/full-ci.log
+            if cargo test --locked --release -p effectcraft-gpu --lib "$test" -- --exact --nocapture --test-threads=1 2>&1 | tee "$case_log" | tee -a ci-evidence/full-ci.log; then
+              case_status=0
+            else
+              case_status=$?
               gpu_status=1
             fi
+            printf 'GPU diagnostic END %s status=%s\n' "$test" "$case_status" | tee -a ci-evidence/full-ci.log
+            if ! grep -Eq '^test result: (ok\. 1 passed; 0 failed|FAILED\. 0 passed; 1 failed);' "$case_log"; then
+              printf 'No single-test terminal result for %s\n' "$test" | tee -a ci-evidence/full-ci.log
+              gpu_status=1
+            fi
+            if grep -Ei 'no (GPU )?adapter|no device|explicitly skipping|tests skipped' "$case_log"; then
+              printf 'GPU diagnostic adapter coverage inconclusive for %s\n' "$test" | tee -a ci-evidence/full-ci.log
+            fi
           done
-          if ! cargo test --locked --release -p effectcraft-gpu --lib -- --nocapture 2>&1 | tee -a ci-evidence/full-ci.log; then
+          printf 'GPU diagnostic BEGIN whole library\n' | tee -a ci-evidence/full-ci.log
+          if cargo test --locked --release -p effectcraft-gpu --lib -- --nocapture 2>&1 | tee -a ci-evidence/full-ci.log; then
+            case_status=0
+          else
+            case_status=$?
             gpu_status=1
           fi
+          printf 'GPU diagnostic END whole library status=%s\n' "$case_status" | tee -a ci-evidence/full-ci.log
           if [ "$gpu_status" -ne 0 ]; then exit "$gpu_status"; fi
           cargo run --locked --package xtask -- ci 2>&1 | tee -a ci-evidence/full-ci.log
       - name: Require unchanged dependency pins
