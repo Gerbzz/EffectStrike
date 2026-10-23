@@ -1,0 +1,51 @@
+{
+  "app": "EffectStrike",
+  "asset": "docs/images/effectstrike-editor-windows2025-20261023.png",
+  "source_head": "2ace3b77272434b4ff65635c1025105913f26862",
+  "run_id": 40019682910,
+  "run_url": "https://github.com/Gerbzz/EffectStrike/actions/runs/40019682910",
+  "artifact_id": 12531766351,
+  "artifact_zip_sha256": "36fc31c30835b30b3a515960b60dc6084d39272b687d7c40dfda4f16601ce5e6",
+  "original_artifact_image_path": "blur-expression/editor.png",
+  "capture_method": "App-native ui.screenshot; native viewport reply/dimensions and original composition-content gate passed for all three saved projects.",
+  "environment": "Standard hosted Windows 2025 runner",
+  "description": "The real native compositor showing the saved synthetic blur-plus-position-expression project, layers and timeline.",
+  "limitations": "Saved synthetic 2D project opening and CPU rendering evidence, not real video footage, interactive timeline/effect editing, or real GPU-effects acceptance. Runtime and packaged icons are unchanged.",
+  "unmodified": true,
+  "sha256": "ce61ffacf96361ea05e7822de3907c6ae76832ec1ccbed640e62b4a98125079b",
+  "git_blob_sha": "4e417375976c9347d1680d85460b9d09880c1f2a",
+  "bytes": 2855892,
+  "dimensions": [
+    1024,
+    697
+  ],
+  "mode": "RGBA",
+  "decoded_rgba_sha256": "048ed8aa60b16e08f51742515b116b832ab762c181c7d53e2ba59aec8c011778",
+  "full_unique_colors": 1322,
+  "original_artifact_provenance": {
+    "repository": "Gerbzz/EffectStrike",
+    "source_head": "2ace3b77272434b4ff65635c1025105913f26862",
+    "run_id": "40019682910",
+    "run_attempt": "1",
+    "captured_at_utc": "2026-10-23T20:59:10.1782420Z",
+    "method": "Running EffectStrike ui.screenshot; native egui Screenshot event with no fallback; original three-project content_verified gates passed",
+    "fixture": "Repository-generated synthetic test material; no user project or capture device opened",
+    "images": [
+      {
+        "file": "baseline/editor.png",
+        "bytes": 2855892,
+        "sha256": "588dba1e4d21c01190eb4b6b26e630be34ec33132277744a92f687954e706f21"
+      },
+      {
+        "file": "blur/editor.png",
+        "bytes": 2855892,
+        "sha256": "2f2477dd00a2001fc162258eb7c22af418912eb56ef1afb305ce50739767f10c"
+      },
+      {
+        "file": "blur-expression/editor.png",
+        "bytes": 2855892,
+        "sha256": "ce61ffacf96361ea05e7822de3907c6ae76832ec1ccbed640e62b4a98125079b"
+      }
+    ]
+  }
+}

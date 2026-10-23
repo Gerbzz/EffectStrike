@@ -1,0 +1,8 @@
+asset:        effectstrike-editor-windows2025-20261023.png
+title:        EffectStrike current native editor screenshot
+author:       EffectStrike contributors
+source:       https://github.com/Gerbzz/EffectStrike/actions/runs/40019682910
+license:      MIT OR Apache-2.0
+license-file: LICENSE-MIT
+added:        2026-10-23
+notes:        Unmodified app-native screenshot at 2ace3b77272434b4ff65635c1025105913f26862. The real native compositor showing the saved synthetic blur-plus-position-expression project, layers and timeline. Saved synthetic 2D project opening and CPU rendering evidence, not real video footage, interactive timeline/effect editing, or real GPU-effects acceptance. Runtime and packaged icons are unchanged. Exact hashes: docs/images/effectstrike-editor-windows2025-20261023.provenance.json.

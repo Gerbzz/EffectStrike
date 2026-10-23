@@ -6,9 +6,20 @@
 
 **Open-source motion graphics and visual effects in Rust.** Build layered compositions, animate properties, preview frames in a native editor, and render from an automation-friendly CLI.
 
+![EffectStrike current native editor with a repository-generated synthetic fixture](docs/images/effectstrike-editor-windows2025-20261023.png)
+
+*Unmodified 1024×697 native frame captured on a standard hosted Windows 2025 runner on 23 October 2026 in [successful run 40019682910](https://github.com/Gerbzz/EffectStrike/actions/runs/40019682910), exact source `2ace3b77272434b4ff65635c1025105913f26862`. The real native compositor showing the saved synthetic blur-plus-position-expression project, layers and timeline. [Source, hashes and limits](docs/images/effectstrike-editor-windows2025-20261023.provenance.json).*
+
+Saved synthetic 2D project opening and CPU rendering evidence, not real video footage, interactive timeline/effect editing, or real GPU-effects acceptance. Runtime and packaged icons are unchanged.
+
+<details>
+<summary>Earlier native capture and its original provenance</summary>
+
 ![EffectStrike native Windows compositor showing the synthetic project](docs/images/effectstrike-editor-windows2025-cropped.png)
 
 *The actual EffectStrike desktop process on a standard hosted Windows 2025 runner. Its saved synthetic project shows the composition viewer, project bin, two layers, timeline, and a 2D preview. This pixel-exact 1024×720 app-window crop comes from [green run 38753532962](https://github.com/Gerbzz/EffectStrike/actions/runs/38753532962); the [full 1040×736 capture](docs/images/effectstrike-editor-windows2025.png) is retained.*
+
+</details>
 
 EffectStrike is an independent early-alpha fork of the complete [EffectCraft](https://github.com/storytold/effectcraft) compositor. This Rust workspace contains the desktop editor, project and render engine, effects, CLI, web frontend source and tests. The features below are present in the foundation; the [verified workflows](#verified-workflows) show which paths this fork has exercised.
 
