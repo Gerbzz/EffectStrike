@@ -9,6 +9,7 @@ iconography, images or other Adobe assets; open licences plus the first-party PW
 
 | Asset | Author | Source | Licence |
 |---|---|---|---|
+| `docs/images/effectstrike-editor-windows2025-20261023.png` | EffectStrike contributors | [Successful hosted run 40019682910](https://github.com/Gerbzz/EffectStrike/actions/runs/40019682910), source `2ace3b77272434b4ff65635c1025105913f26862`; unmodified provenance-listed native frame | MIT OR Apache-2.0 (`LICENSE-MIT`, `LICENSE-APACHE`) |
 | `assets/branding/EffectStrike-logo.svg` | EffectStrike contributors (original vector artwork) | Original work; see `assets/branding/EffectStrike-logo.provenance.json` | MIT OR Apache-2.0 (`LICENSE-MIT`, `LICENSE-APACHE`) |
 | `assets/branding/EffectStrike-logo.png` | EffectStrike contributors (original vector artwork) | Original work; see `assets/branding/EffectStrike-logo.provenance.json` | MIT OR Apache-2.0 (`LICENSE-MIT`, `LICENSE-APACHE`) |
 | `assets/fonts/Inter-Regular.ttf` | The Inter Project Authors | https://github.com/rsms/inter | OFL-1.1 (`assets/fonts/OFL-Inter.txt`) |
