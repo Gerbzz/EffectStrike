@@ -1,0 +1,8 @@
+asset:        EffectStrike-logo.svg
+title:        EffectStrike product logo (SVG)
+author:       EffectStrike contributors (original vector artwork)
+source:       original work
+license:      MIT OR Apache-2.0
+license-file: LICENSE-MIT
+added:        2026-10-23
+notes:        Original vector master. Exact hashes and method: assets/branding/EffectStrike-logo.provenance.json. README product mark only; no runtime or packaged-icon replacement.

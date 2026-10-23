@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/branding/EffectStrike-logo.png" alt="EffectStrike product logo" width="128" height="128">
+</p>
+
 # EffectStrike
 
 **Open-source motion graphics and visual effects in Rust.** Build layered compositions, animate properties, preview frames in a native editor, and render from an automation-friendly CLI.
@@ -60,3 +64,7 @@ The full foundation is pinned to [EffectCraft commit `0311bdc34d0dc10c2d18ff7875
 <img src="assets/branding/PWDS-logo.png" alt="PWDS publisher mark" width="110">
 
 EffectStrike is published by PWDS. Its existing mark has [separate brand terms](assets/branding/LICENSE-brand.txt). EffectStrike is independent of and not endorsed by ArtCraft.
+
+## Product artwork
+
+The EffectStrike product mark above has an original [SVG master](assets/branding/EffectStrike-logo.svg) and matching PNG. [Asset provenance](assets/branding/EffectStrike-logo.provenance.json) records how it was created and the exact file hashes. The PWDS publisher artwork and inherited software credits are unchanged. Existing screenshots retain the artwork visible in their original captured builds.
