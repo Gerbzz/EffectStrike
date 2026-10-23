@@ -26,6 +26,28 @@ public static class StrikeWindowBounds {
 }
 '@
 
+function Request-NativeScreenshot([int]$Port, [string]$Path) {
+    $client = [System.Net.Sockets.TcpClient]::new()
+    try {
+        $client.ReceiveTimeout = 15000
+        $client.SendTimeout = 3000
+        $connect = $client.ConnectAsync('127.0.0.1', $Port)
+        if (!$connect.Wait(3000)) { throw 'Native control channel connection timed out.' }
+        $connect.GetAwaiter().GetResult()
+        $stream = $client.GetStream()
+        $request = @{ id = 1; method = 'ui.screenshot'; params = @{ path = $Path } } | ConvertTo-Json -Depth 4 -Compress
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($request + "`n")
+        $stream.Write($bytes, 0, $bytes.Length)
+        $reader = [System.IO.StreamReader]::new($stream)
+        $line = $reader.ReadLine()
+        if ($null -eq $line) { throw 'Native editor closed the screenshot control connection.' }
+        $reply = $line | ConvertFrom-Json
+        if ($reply.id -ne 1) { throw 'Native screenshot response has the wrong request id.' }
+        return $reply
+    }
+    finally { $client.Dispose() }
+}
+
 function Measure-EditorPixels([System.Drawing.Bitmap]$Bitmap) {
     # This generated project has a large blue composition. A sized black window, title bar,
     # or isolated blue toolbar button cannot satisfy the content gate.
@@ -45,7 +67,13 @@ function Measure-EditorPixels([System.Drawing.Bitmap]$Bitmap) {
     return [ordered]@{ sampled = $sampled; non_dark = $lit; blue_comp = $blue; distinct_colors = $colors.Count }
 }
 
+$listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
+$listener.Start()
+$controlPort = $listener.LocalEndpoint.Port
+$listener.Stop()
 $start = [System.Diagnostics.ProcessStartInfo]::new($binary)
+$start.ArgumentList.Add('--control')
+$start.ArgumentList.Add([string]$controlPort)
 $start.ArgumentList.Add($document)
 $start.UseShellExecute = $false
 $start.RedirectStandardOutput = $false
@@ -60,6 +88,8 @@ $status = [ordered]@{
     process_running = $true
     main_window_handle = 0
     capture = 'unavailable'
+    capture_method = 'native_viewport_screenshot'
+    control_port = $controlPort
     timeout_seconds = $TimeoutSeconds
 }
 
@@ -84,17 +114,32 @@ try {
                 if (!$status.Contains('first_sized_at_seconds')) {
                     $status['first_sized_at_seconds'] = [Math]::Round($clock.Elapsed.TotalSeconds, 1)
                 }
-                if ($null -ne $bitmap) { $bitmap.Dispose() }
-                $bitmap = [System.Drawing.Bitmap]::new($width, $height)
-                $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+                if ($null -ne $bitmap) { $bitmap.Dispose(); $bitmap = $null }
+                $nativePath = Join-Path $directory 'editor-native-candidate.png'
                 try {
-                    $graphics.CopyFromScreen($rect.Left, $rect.Top, 0, 0, $bitmap.Size)
+                    $reply = Request-NativeScreenshot $controlPort $nativePath
                 }
-                finally { $graphics.Dispose() }
+                catch {
+                    $status['last_control_error'] = $_.Exception.Message
+                    Start-Sleep -Seconds 1
+                    continue
+                }
+                $reply | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $directory 'native-screenshot-response.json')
+                if ($reply.ok -ne $true -or !(Test-Path -LiteralPath $nativePath)) {
+                    $status['last_control_error'] = [string]$reply.error
+                    Start-Sleep -Seconds 1
+                    continue
+                }
+                $process.Refresh()
+                if ($process.HasExited) { throw 'Editor exited before native screenshot acceptance.' }
+                $bitmap = [System.Drawing.Bitmap]::new($nativePath)
+                if ($bitmap.Width -ne $reply.result.width -or $bitmap.Height -ne $reply.result.height -or $bitmap.Width -lt 400 -or $bitmap.Height -lt 300) { throw 'Native screenshot dimensions do not match the editor response.' }
+                $status['native_width'] = $bitmap.Width
+                $status['native_height'] = $bitmap.Height
                 $pixels = Measure-EditorPixels $bitmap
                 $status['pixels'] = $pixels
                 if ($pixels.non_dark -ge 200 -and $pixels.blue_comp -ge 80 -and $pixels.distinct_colors -ge 8) {
-                    $bitmap.Save((Join-Path $directory 'editor.png'), [System.Drawing.Imaging.ImageFormat]::Png)
+                    Copy-Item -LiteralPath $nativePath -Destination (Join-Path $directory 'editor.png') -Force
                     $status['capture'] = 'content_verified'
                     $status['content_ready_at_seconds'] = [Math]::Round($clock.Elapsed.TotalSeconds, 1)
                     $status | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $directory 'desktop-status.json')
