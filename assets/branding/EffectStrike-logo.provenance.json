@@ -1,0 +1,28 @@
+{
+  "app": "EffectStrike",
+  "created_utc": "2026-10-23",
+  "source": "Original SVG artwork created for this application at the user's request.",
+  "method": "Original manually authored SVG paths/polygons; geometry-only, two solid colors; no gradients, shadows, text, animal, embedded bitmap, stock artwork, or external references.",
+  "description": "Offset compositing frames and a four-point effect spark.",
+  "renderer": "Inkscape 1.4 (e7c3feb100, 2024-10-09), native SVG export at 1024 x 1024 pixels, transparent background opacity 0; no raster image editing.",
+  "license": "MIT OR Apache-2.0",
+  "scope": "Product artwork in the README. Existing publisher marks, screenshots, runtime artwork, and packaged icons remain unchanged.",
+  "assets": {
+    "svg": {
+      "path": "assets/branding/EffectStrike-logo.svg",
+      "sha256": "5be41df5aa639f6b0557b1d8c0f40b4365dfb1a370b37bdd1f30b480e70c7973",
+      "git_blob_sha": "eddc955d1b17742b4d8489670e76000f3c8d6def"
+    },
+    "png": {
+      "path": "assets/branding/EffectStrike-logo.png",
+      "sha256": "d53cdb8752db48d9b3a5c7b4d3f2b813cfa3e5408140ab7c2e1a752bf6a56181",
+      "git_blob_sha": "b951139f6f5552fa22c2520b21da374f9fa6edc8",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "decoded_rgba_sha256": "7a0ff535fdc2483a1127b4496d15496aac39fb341fb8de725c5a04d7656e3e30"
+    }
+  }
+}
