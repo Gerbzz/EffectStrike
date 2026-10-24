@@ -43,8 +43,12 @@ jobs:
       - name: Export and roundtrip ICNS with native iconutil
         run: |
           mkdir -p icon-evidence
+          cp -R assets/branding/icons/EffectStrike.iconset icon-evidence/expected.iconset
+          cp assets/branding/icons/provenance.json icon-evidence/export-provenance.json
           iconutil -c icns -o icon-evidence/EffectStrike.icns assets/branding/icons/EffectStrike.iconset
           iconutil -c iconset -o icon-evidence/roundtrip.iconset icon-evidence/EffectStrike.icns
+          git rev-parse HEAD > icon-evidence/source-head.txt
+          shasum -a 256 assets/branding/EffectStrike-logo.png icon-evidence/EffectStrike.icns > icon-evidence/sha256.txt
           cargo +1.95.0 run --locked -p xtask -- product-icons --verify-iconset icon-evidence/roundtrip.iconset
           if [ -f assets/branding/icons/EffectStrike.icns ]; then
             iconutil -c iconset -o icon-evidence/committed.iconset assets/branding/icons/EffectStrike.icns
@@ -52,15 +56,17 @@ jobs:
           else
             echo 'Source-only export phase: ICNS artifact must be reviewed and committed before package completion.'
           fi
-          git rev-parse HEAD > icon-evidence/source-head.txt
-          shasum -a 256 assets/branding/EffectStrike-logo.png icon-evidence/EffectStrike.icns > icon-evidence/sha256.txt
           git diff --exit-code -- Cargo.lock assets/branding
       - name: Retain native ICNS and provenance for review
+        if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: effectstrike-native-iconutil
           path: |
             icon-evidence/EffectStrike.icns
+            icon-evidence/roundtrip.iconset/*.png
+            icon-evidence/expected.iconset/*.png
+            icon-evidence/export-provenance.json
             icon-evidence/source-head.txt
             icon-evidence/sha256.txt
           retention-days: 7

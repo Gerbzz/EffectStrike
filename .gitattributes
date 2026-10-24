@@ -1,0 +1,3 @@
+# Preserve exact approved SVG bytes on Windows checkouts for provenance verification.
+/assets/branding/EffectStrike-logo.svg text eol=lf
+/assets/branding/icons/hicolor/scalable/apps/ai.storyteller.effectcraft.svg text eol=lf
