@@ -5,4 +5,4 @@ source:       original work
 license:      MIT OR Apache-2.0
 license-file: LICENSE-MIT
 added:        2026-10-23
-notes:        Rendered from the original SVG master. Exact hashes and method: assets/branding/EffectStrike-logo.provenance.json. README product mark only; no runtime or packaged-icon replacement.
+notes:        Rendered from the original SVG master. Exact hashes and method: assets/branding/EffectStrike-logo.provenance.json. Original master bytes retained unchanged; runtime and package/web exports reuse this approved artwork. Historical creation-scope provenance is retained; current derived exports are documented in assets/branding/icons/provenance.json.

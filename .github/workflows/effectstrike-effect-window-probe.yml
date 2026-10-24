@@ -13,6 +13,9 @@ on:
       - crates/ui-egui/src/**
       - Cargo.toml
       - Cargo.lock
+      - apps/effectcraft/build.rs
+      - scripts/check_product_icon_resources.py
+      - packaging/windows/package.ps1
   push:
     branches: [feature/effect-window-probe]
     paths:
@@ -38,6 +41,7 @@ jobs:
       CARGO_INCREMENTAL: '0'
       CARGO_PROFILE_DEV_DEBUG: '0'
       CARGO_PROFILE_TEST_DEBUG: '0'
+      EFFECTCRAFT_REQUIRE_WINRES: '1'
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -49,6 +53,11 @@ jobs:
       - name: Build native editor and CLI
         shell: pwsh
         run: cargo +1.95.0 build --locked -p effectcraft -p effectcraft-cli
+      - name: Verify actual executable contains approved product icon resources
+        shell: pwsh
+        run: |
+          python scripts/check_product_icon_resources.py --exe target/debug/effectcraft.exe
+          if ($LASTEXITCODE -ne 0) { throw 'Product icon resource verification failed' }
       - name: Generate the baseline, blur-only, and blur-plus-expression saved projects
         shell: pwsh
         run: |

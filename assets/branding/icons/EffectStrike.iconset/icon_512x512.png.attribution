@@ -1,0 +1,8 @@
+asset:        icon_512x512.png
+title:        EffectStrike product icon export
+author:       EffectStrike contributors (original approved product artwork)
+source:       original work; assets/branding/EffectStrike-logo.png and paired SVG master
+license:      MIT OR Apache-2.0
+license-file: LICENSE-MIT
+added:        2026-10-24
+notes:        Direct Lanczos3 size export of accepted PNG; ICO packs those PNGs without changing pixels. No redraw or additional padding. Reproduce with cargo xtask product-icons --write.

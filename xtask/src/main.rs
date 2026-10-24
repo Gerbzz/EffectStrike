@@ -1,4 +1,4 @@
-//! Workspace automation: `cargo xtask <layers|assets|wasm|web|ico|ci>`.
+//! Workspace automation: `cargo xtask <layers|assets|product-icons [--check|--write]|wasm|web|ico|ci>`.
 //!
 //! - `layers`: enforces the dependency layering of `docs/architecture.md` §1 (downward-only edges,
 //!   listed same-layer edges, no UI/OS crates below L5).
@@ -15,6 +15,7 @@
 
 mod bench;
 mod ico;
+mod product_icons;
 mod version;
 
 use std::process::{Command, ExitCode};
@@ -300,11 +301,7 @@ fn web(args: &[String]) -> Result<(), String> {
             std::fs::copy(e.path(), dist.join(&name)).map_err(|e| format!("{name}: {e}"))?;
         }
     }
-    // PWA icons: the app icon (assets/app-icon, attributed there).
-    for n in [256, 512] {
-        let src = format!("assets/app-icon/hicolor/{n}x{n}/apps/ai.storyteller.effectcraft.png");
-        std::fs::copy(&src, dist.join(format!("icon-{n}.png"))).map_err(|e| format!("{src}: {e}"))?;
-    }
+    stage_product_icons(&root(), &dist)?;
     service_worker(&dist)?;
     let size = |p: &std::path::Path| std::fs::metadata(p).map(|m| m.len()).unwrap_or(0);
     let total: u64 = dist_files(&dist).iter().map(|f| size(&dist.join(f))).sum();
@@ -421,6 +418,7 @@ fn main() -> ExitCode {
         "layers" => layers(),
         "wasm" => wasm(),
         "assets" => assets(),
+        "product-icons" => product_icons::run(&root(), &std::env::args().skip(2).collect::<Vec<_>>()),
         "ci" => ci(),
         "web" => web(&std::env::args().skip(2).collect::<Vec<_>>()),
         "bench" => bench::run(&root(), &std::env::args().skip(2).collect::<Vec<_>>()),
@@ -432,7 +430,7 @@ fn main() -> ExitCode {
             let rest: Vec<String> = std::env::args().skip(2).collect();
             version::run(&root(), &rest.iter().map(String::as_str).collect::<Vec<_>>())
         }
-        _ => Err("usage: cargo xtask <layers|assets|wasm|web [--dev] [--serve PORT]|ico OUT.ico IN.png…|version [set X.Y.Z]|ci|bench [--bin CLI] [--quick] [--project F --comp C] [--compare OLD.jsonl] (--help)>".into()),
+        _ => Err("usage: cargo xtask <layers|assets|product-icons [--check|--write]|wasm|web [--dev] [--serve PORT]|ico OUT.ico IN.png…|version [set X.Y.Z]|ci|bench [--bin CLI] [--quick] [--project F --comp C] [--compare OLD.jsonl] (--help)>".into()),
     };
     match r {
         Ok(()) => ExitCode::SUCCESS,
@@ -446,4 +444,44 @@ fn main() -> ExitCode {
 /// The workspace root (the parent of `xtask/`).
 pub fn root() -> std::path::PathBuf {
     std::path::Path::new(env!("CARGO_MANIFEST_DIR")).parent().expect("xtask has a parent dir").to_path_buf()
+}
+
+/// Stage only approved product icon assets; URLs remain relative in the web shell.
+fn stage_product_icons(root: &std::path::Path, dist: &std::path::Path) -> Result<(), String> {
+    std::fs::copy(root.join("assets/branding/EffectStrike-logo.svg"), dist.join("effectstrike-logo.svg")).map_err(|error| error.to_string())?;
+    for n in [256, 512] {
+        let source = root.join(format!("assets/branding/icons/hicolor/{n}x{n}/apps/ai.storyteller.effectcraft.png"));
+        std::fs::copy(&source, dist.join(format!("icon-{n}.png"))).map_err(|error| format!("{}: {error}", source.display()))?;
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod product_web_tests {
+    use super::*;
+
+    #[test]
+    fn web_icons_match_approved_assets_and_change_the_precache_version() {
+        let root = root();
+        let dist = std::env::temp_dir().join(format!("effectstrike-web-icons-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dist);
+        std::fs::create_dir_all(&dist).unwrap();
+        stage_product_icons(&root, &dist).unwrap();
+        assert_eq!(std::fs::read(dist.join("effectstrike-logo.svg")).unwrap(), std::fs::read(root.join("assets/branding/EffectStrike-logo.svg")).unwrap());
+        for size in [256, 512] {
+            let image = image::open(dist.join(format!("icon-{size}.png"))).unwrap();
+            assert_eq!((image.width(), image.height()), (size, size));
+        }
+        let template = "const VERSION = \"__EC_VERSION__\"; const FILES = __EC_FILES__;";
+        std::fs::write(dist.join("sw.js"), template).unwrap();
+        service_worker(&dist).unwrap();
+        let before = std::fs::read_to_string(dist.join("sw.js")).unwrap();
+        assert!(before.contains("./effectstrike-logo.svg") && before.contains("./icon-256.png"));
+        // Real service_worker hashes the icon contents, not merely the app version.
+        std::fs::write(dist.join("effectstrike-logo.svg"), b"changed-test-content").unwrap();
+        std::fs::write(dist.join("sw.js"), template).unwrap();
+        service_worker(&dist).unwrap();
+        assert_ne!(std::fs::read_to_string(dist.join("sw.js")).unwrap(), before);
+        let _ = std::fs::remove_dir_all(dist);
+    }
 }

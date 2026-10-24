@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title id="title">EffectStrike product mark</title>
+<desc id="desc">Offset compositing frames and a four-point effect spark. Original two-color vector artwork. Transparent background.</desc>
+<path fill="#CA6CEC" d="M168 88h256v256h-64V152H168z"/>
+<path fill="#683BD6" d="M88 168h176v64H152v128h128v-88h64v152H88z"/>
+<path fill="#CA6CEC" d="m288 172 18 42 42 18-42 18-18 42-18-42-42-18 42-18z"/>
+</svg>
