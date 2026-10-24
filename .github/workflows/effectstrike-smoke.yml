@@ -1,6 +1,16 @@
 name: EffectStrike bounded smoke
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/effectstrike-smoke.yml
+      - apps/effectcraft/src/main.rs
+      - apps/effectcraft/src/appimage.rs
+      - apps/effectcraft/Cargo.toml
+      - assets/branding/EffectStrike-logo.png
+      - Cargo.toml
+      - Cargo.lock
   push:
     branches:
       - feature/desktop-identity-copy
@@ -26,6 +36,7 @@ jobs:
       - name: Check out the tested revision
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Install Linux build dependencies
         run: |
@@ -47,6 +58,8 @@ jobs:
         run: cargo +1.95.0 test --locked -p effectcraft-cli
       - name: Test Linux desktop entry integration
         run: cargo +1.95.0 test --locked -p effectcraft appimage::tests
+      - name: Test accepted runtime icon decoding
+        run: cargo +1.95.0 test --locked -p effectcraft runtime_icon_decodes_the_product_logo
       - name: Launch and capture the actual desktop Home screen
         shell: bash
         run: |
