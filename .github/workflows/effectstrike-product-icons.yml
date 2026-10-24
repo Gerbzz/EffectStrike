@@ -23,7 +23,11 @@ permissions:
 
 jobs:
   macos-iconutil:
-    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-26]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     steps:
       - name: Check out exact reviewed source
@@ -43,6 +47,9 @@ jobs:
       - name: Export and roundtrip ICNS with native iconutil
         run: |
           mkdir -p icon-evidence
+          sw_vers > icon-evidence/platform.txt
+          xcodebuild -version >> icon-evidence/platform.txt
+          shasum -a 256 /usr/bin/iconutil >> icon-evidence/platform.txt
           cp -R assets/branding/icons/EffectStrike.iconset icon-evidence/expected.iconset
           cp assets/branding/icons/provenance.json icon-evidence/export-provenance.json
           iconutil -c icns -o icon-evidence/EffectStrike.icns assets/branding/icons/EffectStrike.iconset
@@ -61,7 +68,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: effectstrike-native-iconutil
+          name: effectstrike-native-iconutil-${{ matrix.os }}
           path: |
             icon-evidence/EffectStrike.icns
             icon-evidence/roundtrip.iconset/*.png
@@ -69,6 +76,7 @@ jobs:
             icon-evidence/export-provenance.json
             icon-evidence/source-head.txt
             icon-evidence/sha256.txt
+            icon-evidence/platform.txt
           retention-days: 7
           if-no-files-found: error
       - name: Require reviewed committed ICNS before final package completion
