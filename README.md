@@ -6,6 +6,12 @@
 
 **Open-source motion graphics and visual effects in Rust.** Build layered compositions, animate properties, preview frames in a native editor, and render from an automation-friendly CLI.
 
+## Rust direction and migration status
+
+- **Target:** Rust-native motion graphics and visual effects, extending the selected EffectCraft foundation rather than replacing an already-Rust core.
+- **Current implementation:** The [Cargo workspace](Cargo.toml) and [desktop entry point](apps/effectcraft/src/main.rs) already use Rust for the selected compositor foundation, with EffectStrike adaptations.
+- **Remaining migration:** Continue feature integration and runtime validation on that Rust base. Real GPU effects, representative footage, interactive editing, broader platform support and packaging still need acceptance; source availability does not establish product completion.
+
 ![EffectStrike current native editor with a repository-generated synthetic fixture](docs/images/effectstrike-editor-windows2025-20261023.png)
 
 *Unmodified 1024×697 native frame captured on a standard hosted Windows 2025 runner on 23 October 2026 in [successful run 40019682910](https://github.com/Gerbzz/EffectStrike/actions/runs/40019682910), exact source `2ace3b77272434b4ff65635c1025105913f26862`. The real native compositor showing the saved synthetic blur-plus-position-expression project, layers and timeline. [Source, hashes and limits](docs/images/effectstrike-editor-windows2025-20261023.provenance.json).*
