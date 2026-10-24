@@ -15,7 +15,7 @@ fn config_dir(name: &str) -> PathBuf {
     d
 }
 
-/// Runs the app, which must exit at once with `effectcraft: <message>` and a failure status. A
+/// Runs the app, which must exit at once with `EffectStrike: <message>` and a failure status. A
 /// regression fails instead of leaving a window open: the process is killed after 5 s.
 fn rejects(name: &str, args: &[&str], env: &[(&str, &str)], message: &str) {
     let config = config_dir(name);
@@ -40,7 +40,7 @@ fn rejects(name: &str, args: &[&str], env: &[(&str, &str)], message: &str) {
     assert!(!timed_out, "{args:?}: the app started or did not exit promptly");
     assert_eq!(out.status.code(), Some(1), "{args:?}");
     assert!(out.stdout.is_empty(), "{args:?}: {:?}", String::from_utf8_lossy(&out.stdout));
-    assert_eq!(String::from_utf8(out.stderr).unwrap(), format!("effectcraft: {message}\n"), "{args:?}");
+    assert_eq!(String::from_utf8(out.stderr).unwrap(), format!("EffectStrike: {message}\n"), "{args:?}");
     let written: Vec<_> = std::fs::read_dir(&config).unwrap().collect();
     assert!(written.is_empty(), "{args:?}: wrote {written:?}");
     let _ = std::fs::remove_dir_all(&config);
@@ -69,5 +69,5 @@ fn a_bad_control_port_stops_the_launch() {
 fn version_still_prints_with_a_bad_port_variable() {
     let out = Command::new(env!("CARGO_BIN_EXE_effectcraft")).arg("--version").env("EFFECTCRAFT_CONTROL_PORT", "abc").output().unwrap();
     assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
-    assert_eq!(String::from_utf8(out.stdout).unwrap(), format!("effectcraft {}\n", env!("CARGO_PKG_VERSION")));
+    assert_eq!(String::from_utf8(out.stdout).unwrap(), format!("EffectStrike {}\n", env!("CARGO_PKG_VERSION")));
 }

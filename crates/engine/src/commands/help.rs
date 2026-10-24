@@ -31,8 +31,8 @@ fn docs(s: &mut Session, p: &Value) -> Result<Value> {
 pub fn specs() -> Vec<CommandSpec> {
     vec![
         cmd!("help.docs", "EffectStrike Help...", [], Some("F1"), "{page?: help|scripting|expressions|effects|agents}", always, docs),
-        cmd!("help.discord", "Original EffectCraft community...", ["Help"], None, "{}", always, |s, _| open(s, links::DISCORD.into())),
-        cmd!("help.website", "Original EffectCraft project", ["Help"], None, "{}", always, |s, _| open(s, links::WEBSITE.into())),
+        cmd!("help.discord", "Original EffectCraft Community...", ["Help"], None, "{}", always, |s, _| open(s, links::DISCORD.into())),
+        cmd!("help.website", "Original EffectCraft Project", ["Help"], None, "{}", always, |s, _| open(s, links::WEBSITE.into())),
         cmd!("help.appPage", "EffectStrike Project Page", ["Help"], None, "{}", always, |s, _| open(s, links::APP_PAGE.into())),
         cmd!("help.github", "EffectStrike on GitHub", ["Help"], None, "{}", always, |s, _| open(s, links::GITHUB.into())),
         cmd!("help.onlineTutorials", "Online Tutorials...", ["Help"], None, "{}", always, |s, _| open(s, links::APP_PAGE.into())),
