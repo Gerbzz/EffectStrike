@@ -11,6 +11,17 @@ on:
       - assets/branding/EffectStrike-logo.png
       - Cargo.toml
       - Cargo.lock
+      - apps/effectcraft/build.rs
+      - assets/branding/icons/**
+      - assets/branding/EffectStrike-logo.svg
+      - xtask/**
+      - scripts/check_product_icon_routes.py
+      - scripts/check_product_icon_resources.py
+      - scripts/test_product_icon_resources.py
+      - packaging/linux/**
+      - packaging/freebsd/package.sh
+      - apps/effectcraft-web/web/index.html
+      - apps/effectcraft-web/web/manifest.webmanifest
   push:
     branches:
       - feature/desktop-identity-copy
@@ -45,6 +56,14 @@ jobs:
           ldconfig -p | grep -F libxkbcommon-x11.so.0
       - name: Install pinned Rust toolchain
         run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Verify product exports, routing, attribution and web icon cache regression
+        run: |
+          cargo +1.95.0 run --locked -p xtask -- product-icons --check
+          cargo +1.95.0 test --locked -p xtask
+          cargo +1.95.0 run --locked -p xtask -- assets
+          python3 scripts/check_product_icon_routes.py
+          python3 scripts/check_product_icon_resources.py
+          python3 -m unittest discover -s scripts -p test_product_icon_resources.py
       - name: Build desktop and headless applications
         run: cargo +1.95.0 build --locked -p effectcraft -p effectcraft-cli
       - name: Check public application identity
