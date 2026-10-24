@@ -1152,6 +1152,7 @@ dependencies = [
  "eframe",
  "egui",
  "fmv-macos-events",
+ "image",
  "log",
  "muda",
  "objc2 0.6.4",

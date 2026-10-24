@@ -10,7 +10,7 @@
 
 *Unmodified 1024×697 native frame captured on a standard hosted Windows 2025 runner on 23 October 2026 in [successful run 40019682910](https://github.com/Gerbzz/EffectStrike/actions/runs/40019682910), exact source `2ace3b77272434b4ff65635c1025105913f26862`. The real native compositor showing the saved synthetic blur-plus-position-expression project, layers and timeline. [Source, hashes and limits](docs/images/effectstrike-editor-windows2025-20261023.provenance.json).*
 
-Saved synthetic 2D project opening and CPU rendering evidence, not real video footage, interactive timeline/effect editing, or real GPU-effects acceptance. Runtime and packaged icons are unchanged.
+Saved synthetic 2D project opening and CPU rendering evidence, not real video footage, interactive timeline/effect editing, or real GPU-effects acceptance. These captures retain the icons from their recorded source; they do not verify the newer runtime branding described below.
 
 <details>
 <summary>Earlier native capture and its original provenance</summary>
@@ -70,7 +70,7 @@ These are source commands, not installer instructions. The tested synthetic impo
 
 ## Project and credits
 
-The full foundation is pinned to [EffectCraft commit `0311bdc34d0dc10c2d18ff7875b4f52d483e5e27`](https://github.com/storytold/effectcraft/commit/0311bdc34d0dc10c2d18ff7875b4f52d483e5e27). The original [MIT](LICENSE-MIT) and [Apache-2.0](LICENSE-APACHE) licences, [NOTICE](NOTICE) and [asset attribution](ATTRIBUTION.md) remain. The inherited openly licensed unicorn app icon is temporary source artwork, not a finished EffectStrike icon.
+The full foundation is pinned to [EffectCraft commit `0311bdc34d0dc10c2d18ff7875b4f52d483e5e27`](https://github.com/storytold/effectcraft/commit/0311bdc34d0dc10c2d18ff7875b4f52d483e5e27). The original [MIT](LICENSE-MIT) and [Apache-2.0](LICENSE-APACHE) licences, [NOTICE](NOTICE) and [asset attribution](ATTRIBUTION.md) remain. The inherited openly licensed unicorn artwork is preserved for history and the packaging routes not yet migrated below.
 
 <img src="assets/branding/PWDS-logo.png" alt="PWDS publisher mark" width="110">
 
@@ -79,3 +79,7 @@ EffectStrike is published by PWDS. Its existing mark has [separate brand terms](
 ## Product artwork
 
 The EffectStrike product mark above has an original [SVG master](assets/branding/EffectStrike-logo.svg) and matching PNG. [Asset provenance](assets/branding/EffectStrike-logo.provenance.json) records how it was created and the exact file hashes. The PWDS publisher artwork and inherited software credits are unchanged. Existing screenshots retain the artwork visible in their original captured builds.
+
+Windows/Linux native windows now embed that same unchanged 1024×1024 PNG. The AppImage helper derives a transparent 256×256 PNG in memory for its hicolor entry and refreshes an outdated icon only for an entry it owns; installed-package and user-owned entries are left alone. This source integration is not fresh native screenshot or installer acceptance.
+
+The padded macOS runtime icon, Windows executable/MSI `.ico`, macOS `.icns`, Linux package icon exports and web favicon remain inherited artwork. They need separately validated exports and packaging checks; `packaging/icons.sh` still regenerates the preserved upstream assets, not the product mark.
