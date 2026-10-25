@@ -6,13 +6,13 @@
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rerun-if-changed=../../assets/app-icon/effectcraft.ico");
+    println!("cargo:rerun-if-changed=../../assets/branding/icons/EffectStrike.ico");
     println!("cargo:rerun-if-env-changed=EFFECTCRAFT_REQUIRE_WINRES");
     if std::env::var("CARGO_CFG_TARGET_OS").as_deref() != Ok("windows") {
         return;
     }
     let mut res = winresource::WindowsResource::new();
-    res.set_icon("../../assets/app-icon/effectcraft.ico")
+    res.set_icon("../../assets/branding/icons/EffectStrike.ico")
         .set("ProductName", "EffectStrike")
         .set("FileDescription", "EffectStrike motion graphics and visual effects")
         .set("LegalCopyright", "Copyright (c) 2026 The EffectCraft contributors. MIT OR Apache-2.0.")

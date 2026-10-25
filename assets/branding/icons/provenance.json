@@ -1,0 +1,110 @@
+{
+  "source_png": "assets/branding/EffectStrike-logo.png",
+  "source_png_sha256": "d53cdb8752db48d9b3a5c7b4d3f2b813cfa3e5408140ab7c2e1a752bf6a56181",
+  "source_svg": "assets/branding/EffectStrike-logo.svg",
+  "source_svg_sha256": "5be41df5aa639f6b0557b1d8c0f40b4365dfb1a370b37bdd1f30b480e70c7973",
+  "method": "Direct Lanczos3 resize with image 0.25.10 and existing xtask ICO packer; original 1024 PNG and paired SVG preserved byte-for-byte. ICNS requires macOS iconutil from emitted iconset. No redraw, added padding, or new visual design.",
+  "icns_status": "pending native iconutil export; not generated or validated in this source-only phase",
+  "exports": [
+    {
+      "path": "assets/branding/icons/EffectStrike.ico",
+      "bytes": 15448,
+      "sha256": "309d6a9702a063efdce2d4396a1ae89e49cb34ea50481c0821fb9c6f66125380"
+    },
+    {
+      "path": "assets/branding/icons/EffectStrike.iconset/icon_128x128.png",
+      "bytes": 2601,
+      "sha256": "060256cc1a6491cdcebe49375bdf43b62c1991dde232eda99dfa732adc34343a"
+    },
+    {
+      "path": "assets/branding/icons/EffectStrike.iconset/icon_128x128@2x.png",
+      "bytes": 5245,
+      "sha256": "4a1c7e1479016e4f68167e03af50f56ba33d30b77b5febcd51e867cfd328034d"
+    },
+    {
+      "path": "assets/branding/icons/EffectStrike.iconset/icon_16x16.png",
+      "bytes": 617,
+      "sha256": "b7a99b1cfddfb9a5706f02365d52c89e40594381a9724403c3321a56c3421228"
+    },
+    {
+      "path": "assets/branding/icons/EffectStrike.iconset/icon_16x16@2x.png",
+      "bytes": 1195,
+      "sha256": "925ddb139c768452ca1944517abb5d422029490ab2103bd0c51a7c574d6ae2fe"
+    },
+    {
+      "path": "assets/branding/icons/EffectStrike.iconset/icon_256x256.png",
+      "bytes": 5245,
+      "sha256": "4a1c7e1479016e4f68167e03af50f56ba33d30b77b5febcd51e867cfd328034d"
+    },
+    {
+      "path": "assets/branding/icons/EffectStrike.iconset/icon_256x256@2x.png",
+      "bytes": 12224,
+      "sha256": "ee3bb8182d9728c8b03049189a9f58bf25871b0d6b4d2771482fdf19a4cba8f8"
+    },
+    {
+      "path": "assets/branding/icons/EffectStrike.iconset/icon_32x32.png",
+      "bytes": 1195,
+      "sha256": "925ddb139c768452ca1944517abb5d422029490ab2103bd0c51a7c574d6ae2fe"
+    },
+    {
+      "path": "assets/branding/icons/EffectStrike.iconset/icon_32x32@2x.png",
+      "bytes": 1613,
+      "sha256": "e6619da34b5bbba99d448eecfc576ebe0b9d299f1240b35037e9f622b3620596"
+    },
+    {
+      "path": "assets/branding/icons/EffectStrike.iconset/icon_512x512.png",
+      "bytes": 12224,
+      "sha256": "ee3bb8182d9728c8b03049189a9f58bf25871b0d6b4d2771482fdf19a4cba8f8"
+    },
+    {
+      "path": "assets/branding/icons/EffectStrike.iconset/icon_512x512@2x.png",
+      "bytes": 9155,
+      "sha256": "d53cdb8752db48d9b3a5c7b4d3f2b813cfa3e5408140ab7c2e1a752bf6a56181"
+    },
+    {
+      "path": "assets/branding/icons/hicolor/128x128/apps/ai.storyteller.effectcraft.png",
+      "bytes": 2601,
+      "sha256": "060256cc1a6491cdcebe49375bdf43b62c1991dde232eda99dfa732adc34343a"
+    },
+    {
+      "path": "assets/branding/icons/hicolor/16x16/apps/ai.storyteller.effectcraft.png",
+      "bytes": 617,
+      "sha256": "b7a99b1cfddfb9a5706f02365d52c89e40594381a9724403c3321a56c3421228"
+    },
+    {
+      "path": "assets/branding/icons/hicolor/24x24/apps/ai.storyteller.effectcraft.png",
+      "bytes": 763,
+      "sha256": "822cc0df4dfcd28ef1f48559c57f7d03a3b929399611c3cd64b8417c6658accc"
+    },
+    {
+      "path": "assets/branding/icons/hicolor/256x256/apps/ai.storyteller.effectcraft.png",
+      "bytes": 5245,
+      "sha256": "4a1c7e1479016e4f68167e03af50f56ba33d30b77b5febcd51e867cfd328034d"
+    },
+    {
+      "path": "assets/branding/icons/hicolor/32x32/apps/ai.storyteller.effectcraft.png",
+      "bytes": 1195,
+      "sha256": "925ddb139c768452ca1944517abb5d422029490ab2103bd0c51a7c574d6ae2fe"
+    },
+    {
+      "path": "assets/branding/icons/hicolor/48x48/apps/ai.storyteller.effectcraft.png",
+      "bytes": 1358,
+      "sha256": "a3fe5551c2c424486bf0e54aac53fb0974a01a605d4a12b7b2c5d910fa76fa30"
+    },
+    {
+      "path": "assets/branding/icons/hicolor/512x512/apps/ai.storyteller.effectcraft.png",
+      "bytes": 12224,
+      "sha256": "ee3bb8182d9728c8b03049189a9f58bf25871b0d6b4d2771482fdf19a4cba8f8"
+    },
+    {
+      "path": "assets/branding/icons/hicolor/64x64/apps/ai.storyteller.effectcraft.png",
+      "bytes": 1613,
+      "sha256": "e6619da34b5bbba99d448eecfc576ebe0b9d299f1240b35037e9f622b3620596"
+    },
+    {
+      "path": "assets/branding/icons/hicolor/scalable/apps/ai.storyteller.effectcraft.svg",
+      "bytes": 569,
+      "sha256": "5be41df5aa639f6b0557b1d8c0f40b4365dfb1a370b37bdd1f30b480e70c7973"
+    }
+  ]
+}

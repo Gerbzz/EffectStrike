@@ -32,15 +32,10 @@ use effectcraft_ui_egui::EffectcraftApp;
 use serde_json::json;
 
 /// Accepted product artwork, shared by native windows and the derived AppImage icon.
-#[cfg(not(target_os = "macos"))]
 const ICON_PNG: &[u8] = include_bytes!("../../../assets/branding/EffectStrike-logo.png");
 
-/// Windows/Linux windows use the accepted product PNG without changing its artwork.
-/// macOS retains its padded Dock asset; packaged icons remain separate.
+/// All native windows use the same accepted transparent product PNG without changing its artwork.
 fn app_icon() -> egui::IconData {
-    #[cfg(target_os = "macos")]
-    let png: &[u8] = include_bytes!("../../../assets/app-icon/effectcraft-macos-512.png");
-    #[cfg(not(target_os = "macos"))]
     let png: &[u8] = ICON_PNG;
     eframe::icon_data::from_png_bytes(png).unwrap_or_default()
 }
@@ -493,7 +488,6 @@ mod tests {
     use super::{Args, parse_args};
     use std::env::VarError;
 
-    #[cfg(not(target_os = "macos"))]
     #[test]
     fn runtime_icon_decodes_the_product_logo() {
         let approved = eframe::icon_data::from_png_bytes(include_bytes!("../../../assets/branding/EffectStrike-logo.png")).unwrap();
