@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/branding/EffectStrike-logo.png" alt="EffectStrike product logo" width="128" height="128">
+  <img src="assets/branding/EffectStrike-logo.svg" alt="EffectStrike product logo" width="128" height="128">
 </p>
 
 # EffectStrike
